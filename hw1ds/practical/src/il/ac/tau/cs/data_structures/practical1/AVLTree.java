@@ -76,6 +76,7 @@ public class AVLTree {
      * returns -1 if an item with key k already exists in the tree.
      */
     public int insert(int k, boolean i) {
+        /** 
     	AVLNode External_leaf = new AVLNode(null);
     	int balance, counter =0;
     	AVLNode new_node = new AVLNode(i);
@@ -95,7 +96,7 @@ public class AVLTree {
     		else
     			curr = curr.getRight();
     		parent.setHeight(parent.getHeight()+1);
-    		parent.hieght_change_insert = true;
+    		parent.height_change_insert = true;
     	}
     	
     	new_node.setParent(parent);
@@ -121,17 +122,55 @@ public class AVLTree {
     		inorder(this.root);
     		balance = parent.getbalanced();
     		System.out.println(parent.getKey() + " --->   balance = " + balance);
-    		System.out.println("left hieght = " + parent.getLeft().getHeight() + " right hight = " + parent.getRight().getHeight());
-    		if (Math.abs(balance) < 2 && !parent.hieght_change_insert) {
+    		System.out.println("left height = " + parent.getLeft().getHeight() + " right hight = " + parent.getRight().getHeight());
+    		if (Math.abs(balance) < 2 && !parent.height_change_insert) {
     			break;
     		}
-    		else if(Math.abs(balance) < 2 && parent.hieght_change_insert)
+    		else if(Math.abs(balance) < 2 && parent.height_change_insert)
     			parent = parent.getParent();
     		else // Math.abs(balance) == 2 
     			counter = rotate(balance,new_node.getKey(),parent,0);
     	}
     	this.size ++;
        return counter;
+       */
+
+       //find the correct place to add node
+        AVLNode x = this.root;
+        while(x.info != null) {
+          if(k == x.getKey()) 
+              return -1;
+          else if (k<x.getKey())
+              x = x.getLeft();
+          else
+              x = x.getRight();
+        } //TODO: maybe change height here, probobly on the way back
+
+        //add the new node
+    	int balance, counter =0;
+        AVLNode externa_leaf = new AVLNode(null);
+    	AVLNode new_node = new AVLNode(i);
+
+    	new_node.setKey(k);
+    	new_node.setHeight(x.height+1);
+    	new_node.setLeft(externa_leaf);
+    	new_node.setRight(externa_leaf);
+    	new_node.setParent(x);
+
+        //update max/min
+        if (k < this.minNode.key) {
+            this.minNode = new_node;
+        } 
+        if (k>this.maxNode.key) {
+            this.maxNode = new_node;
+        }
+
+        //balance tree
+        if(Math.max(Math.abs(new_node.height-this.minNode.height),
+                    Math.abs(new_node.height-this.maxNode.height))
+            > 1) { //check if the tree is balanced using both extremes
+                counter = rotate(balance, key, node, counter);
+            }
     }
     
     
@@ -412,7 +451,7 @@ public class AVLTree {
     public static void clear_check_height(AVLNode root) {
         if (root.getValue() != null)        {
         	clear_check_height(root.getLeft());
-            root.hieght_change_insert = false;
+            root.height_change_insert = false;
             clear_check_height(root.getRight());
         }
     }
@@ -436,9 +475,9 @@ public class AVLTree {
     	private AVLNode left_son;
     	private AVLNode right_son;
     	private AVLNode parent;
-    	private int hieght;
+    	private int height;
     	private boolean sub_tree_xor; // keeps the xor between all key is node's sub tree
-    	public boolean hieght_change_insert = false;
+    	public boolean height_change_insert = false;
     	
     	public AVLNode(Boolean info) {
     		this.info = info;
@@ -491,7 +530,7 @@ public class AVLTree {
 
         //returns the parent (if there is no parent return null)
         public AVLNode getParent() {
-            return this.parent; // to be replaced by student code
+            return this.parent;
         }
 
         // Returns True if this is a non-virtual AVL node
@@ -501,14 +540,14 @@ public class AVLTree {
 
         // sets the height of the node
         public void setHeight(int height) {
-            this.hieght = height;
+            this.height = height;
         }
 
         // Returns the height of the node (-1 for virtual nodes)
         public int getHeight() {
             if(info == null)
             	return -1;
-            return this.hieght;
+            return this.height;
         }
         
         
@@ -539,6 +578,7 @@ public class AVLTree {
             insered.setHeight(Math.max(insered.getLeft().getHeight(), insered.getRight().getHeight()) +1 );
             return insered;
         }
+
         private AVLNode leftRotate(AVLNode future_left_son) {
         	System.out.println();
         	System.out.println("~~~~~left rotation~~~~~");
