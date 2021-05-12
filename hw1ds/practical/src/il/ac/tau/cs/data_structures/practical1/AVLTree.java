@@ -154,6 +154,8 @@ public class AVLTree {
                 add_left = false;
           }
         } 
+        //update size
+        this.size+=1;
 
         //add the new node
     	int balance, counter =0;
@@ -170,9 +172,9 @@ public class AVLTree {
             this.root.setSon(new_node);
             return 0;
         } else if (add_left) {
-    	    x.left_son=new_node;
+    	    x.setLeft(new_node);
         } else {
-            x.right_son=new_node;
+            x.setRight(new_node);
         }
 
         //update max/min
@@ -187,9 +189,9 @@ public class AVLTree {
         while (x.isRealNode()) {
            balance = x.getbalanced();
            if (balance>1 || balance<-1) {
-               return rotate(balance, x.key, x);
+               return rotate(balance, x);
            }
-           x.height+=1;
+           x.updateHeight();
            x = x.parent;
         }
 
@@ -197,7 +199,7 @@ public class AVLTree {
     }
     
     
-    private int rotate(int balance, int key, AVLNode node) {
+    private int rotate(int balance, AVLNode node) {
         // Left Right Case
         if (balance > 1 && node.getLeft().getbalanced()<0) {
         	System.out.println("left then right ");
@@ -247,12 +249,77 @@ public class AVLTree {
             else
                 x = x.getRight();
         }
-        if (x.info=null)
+        if (x.info==null)
             return -1;
 
+        //update size
+        this.size -= 1;
 
+        AVLNode balanceNode = null;
+        int balance = 0;
+        int counter = 0;
 
-        return 42;    // to be replaced by student code
+        if (x.getRight().isRealNode() || x.getRight().isRealNode()) {
+            //replace node if not leaf
+            AVLNode replacementNode = this.successor(x);
+
+            //old children
+            balanceNode = replacementNode.getParent();
+            if (balanceNode==x){
+                balanceNode = replacementNode;
+
+                //new children
+                replacementNode.setLeft(x.getLeft());
+
+                //update parent
+                replacementNode.setParent(x.getParent());
+                if (x.getParent().getLeft()==x)
+                    x.getParent().setLeft(replacementNode);
+                else
+                    x.getParent().setRight(replacementNode);
+
+            } else {
+                //old children
+                balanceNode.setLeft(replacementNode.getRight());
+                balanceNode.updateHeight();
+
+                //new children
+                replacementNode.setLeft(x.getLeft());
+                replacementNode.setRight(x.getRight());
+
+            }
+
+            //update parent
+            replacementNode.setParent(x.getParent());
+            if (x.getParent().getLeft()==x)
+                x.getParent().setLeft(replacementNode);
+            else
+                x.getParent().setRight(replacementNode);
+
+            //update heights
+            replacementNode.updateHeight();
+            replacementNode.getParent().updateHeight();
+
+        } else {
+            //delete node
+            balanceNode = x.getParent();
+            if (balanceNode.getLeft()==x)
+                balanceNode.setLeft(new AVLNode());
+            else
+                balanceNode.setRight(new AVLNode());
+            balanceNode.updateHeight();
+        }
+
+        // balance tree
+        while (balanceNode.isRealNode()) {
+            balance = balanceNode.getbalanced();
+            if (balance>1 || balance<-1) {
+                counter += rotate(balance, balanceNode);
+            }
+            balanceNode = balanceNode.getParent();
+        }
+
+        return counter;
     }
 
     /**
@@ -596,6 +663,10 @@ public class AVLTree {
         		return 0;
         	return this.getLeft().getHeight() - this.getRight().getHeight();
         }
+
+        public void updateHeight() {
+            this.setHeight(Math.max(this.getLeft().getHeight(), this.getRight().getHeight()) + 1);
+        }
         
         private AVLNode rightRotate() {
             AVLNode replacementNode = this.left_son;
@@ -611,9 +682,9 @@ public class AVLTree {
             replacementNode.setRight(this);
 
             // Update heights
-            this.setHeight(Math.max(nodeParent.getLeft().getHeight(), nodeParent.getRight().getHeight()));
-            replacementNode.setHeight(Math.max(replacementNode.getLeft().getHeight(), replacementNode.getRight().getHeight()));
-            nodeParent.setHeight(Math.max(nodeParent.getRight().getHeight(), nodeParent.getLeft().getHeight()));
+            this.updateHeight();
+            replacementNode.updateHeight();
+            nodeParent.updateHeight();
             return replacementNode;
         }
 
@@ -632,9 +703,9 @@ public class AVLTree {
             replacementNode.setLeft(this);
 
             // Update heights
-            this.setHeight(Math.max(this.getRight().getHeight(), this.getLeft().getHeight()));
-            replacementNode.setHeight(Math.max(replacementNode.getRight().getHeight(), replacementNode.getLeft().getHeight()));
-            nodeParent.setHeight(Math.max(nodeParent.getRight().getHeight(), nodeParent.getLeft().getHeight()));
+            this.updateHeight();
+            replacementNode.updateHeight();
+            nodeParent.updateHeight();
             return replacementNode;
         }
         

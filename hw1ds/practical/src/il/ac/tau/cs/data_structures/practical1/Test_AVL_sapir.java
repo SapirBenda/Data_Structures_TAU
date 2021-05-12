@@ -17,7 +17,7 @@ public class Test_AVL_sapir {
            tree.insert(keys[i], vals[i]);
        }
 
-		
+		tree.delete(8);
 
 
 	}
