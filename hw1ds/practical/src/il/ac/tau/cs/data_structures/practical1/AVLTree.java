@@ -198,36 +198,34 @@ public class AVLTree {
     
     
     private int rotate(int balance, int key, AVLNode node) {
-    	System.out.println();
-    	System.out.println("------------------rotate------------------");
-    	System.out.println("balance = " + balance + " key that inserted = "+ key);
-    	System.out.println();
-    	if (balance > 1 && key < node.getLeft().getKey()) {
-            node.rightRotate();
-            return 1;
-        }
- 
-        // Right Right Case
-        else if (balance < -1 && key > node.getRight().getKey()) {
-        	node.leftRotate();
-            return 1;
-        }
- 
         // Left Right Case
-        else if (balance > 1 && key > node.getLeft().getKey()) {
-        	System.out.println("left then rigth ");
-            node.left_son.leftRotate();
+        if (balance > 1 && node.getLeft().getbalanced()<0) {
+        	System.out.println("left then right ");
+            node.getLeft().leftRotate();
             node.rightRotate();
             return 2;
         }
  
         // Right Left Case
-        else if (balance < -1 && key < node.getRight().getKey()) {
-        	System.out.println("rigth then left");
-            node.right_son.rightRotate();
+        else if (balance < -1 && node.getRight().getbalanced()>0) {
+        	System.out.println("right then left");
+            node.getRight().rightRotate();
             node.leftRotate();
             return 2;
         }
+
+        //Left Left Case
+        else if (balance > 1) {
+            node.rightRotate();
+            return 1;
+        }
+
+        // Right Right Case
+        else if (balance < -1) {
+            node.leftRotate();
+            return 1;
+        }
+
         return 0;
     }
     
@@ -242,6 +240,18 @@ public class AVLTree {
      * returns -1 if an item with key k was not found in the tree.
      */
     public int delete(int k) {
+        AVLNode x = this.getRoot();
+        while(x.info != null && x.getKey()!=k) {
+            if (k<x.getKey())
+                x = x.getLeft();
+            else
+                x = x.getRight();
+        }
+        if (x.info=null)
+            return -1;
+
+
+
         return 42;    // to be replaced by student code
     }
 
