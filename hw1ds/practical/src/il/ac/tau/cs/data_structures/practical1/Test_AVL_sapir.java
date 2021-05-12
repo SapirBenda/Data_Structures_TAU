@@ -13,9 +13,9 @@ public class Test_AVL_sapir {
         boolean[] vals = {true, true, false, false, true};
         
        
-//        for (int i = 0; i < keys.length; i++) {
-//            tree.insert(keys[i], vals[i]);
-//        }
+       for (int i = 0; i < keys.length; i++) {
+           tree.insert(keys[i], vals[i]);
+       }
 
 		
 

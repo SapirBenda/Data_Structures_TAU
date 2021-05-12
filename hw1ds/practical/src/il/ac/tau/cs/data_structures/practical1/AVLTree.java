@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public class AVLTree {
 
-	private AVLNode root;
+	private AVlRoot root;
 	private int size;
 	private AVLNode minNode;
 	private AVLNode maxNode;
@@ -29,10 +29,10 @@ public class AVLTree {
      * O(1)
      */  
     public AVLTree(){
-    	this.root= new AVLNode(null);
+    	this.root = new AVlRoot();
     	this.size =0;
-    	this.minNode = root;
-    	this.maxNode=root;
+    	this.minNode = this.getRoot();
+    	this.maxNode= this.getRoot();
         
     }
 
@@ -43,7 +43,7 @@ public class AVLTree {
      * O(1)
      */
     public boolean empty() {
-        return (this.root.info == null) ? true : false; 
+        return (this.getRoot().info == null) ? true : false;
     }
 
     /**
@@ -54,7 +54,7 @@ public class AVLTree {
      * O(logn)
      */
     public Boolean search(int k) {
-    	AVLNode x = this.root;
+    	AVLNode x = this.getRoot();
     	while(x.info != null) {
     		if(k == x.getKey()) 
     			return x.getValue();
@@ -135,27 +135,45 @@ public class AVLTree {
        return counter;
        */
 
+        Boolean add_left = null;
        //find the correct place to add node
-        AVLNode x = this.root;
-        while(x.info != null) {
-          if(k == x.getKey()) 
+        AVLNode x = this.getRoot();
+        while(x.info != null && add_left == null) {
+          if(k == x.getKey())
               return -1;
-          else if (k<x.getKey())
-              x = x.getLeft();
-          else
-              x = x.getRight();
-        } //TODO: maybe change height here, probobly on the way back
+          else if (k<x.getKey()) {
+              if (x.getLeft().isRealNode())
+                x = x.getLeft();
+              else
+                  add_left = true;
+
+            } else {
+            if (x.getRight().isRealNode())
+                x = x.getRight();
+            else
+                add_left = false;
+          }
+        } 
 
         //add the new node
     	int balance, counter =0;
-        AVLNode externa_leaf = new AVLNode(null);
+        AVLNode external_leaf = new AVLNode(null);
     	AVLNode new_node = new AVLNode(i);
 
     	new_node.setKey(k);
-    	new_node.setHeight(x.height+1);
-    	new_node.setLeft(externa_leaf);
-    	new_node.setRight(externa_leaf);
+    	new_node.setHeight(0);
+    	new_node.setLeft(external_leaf);
+    	new_node.setRight(external_leaf);
     	new_node.setParent(x);
+
+        if (this.empty()) {
+            this.root.setSon(new_node);
+            return 0;
+        } else if (add_left) {
+    	    x.left_son=new_node;
+        } else {
+            x.right_son=new_node;
+        }
 
         //update max/min
         if (k < this.minNode.key) {
@@ -166,46 +184,51 @@ public class AVLTree {
         }
 
         //balance tree
-        if(Math.max(Math.abs(new_node.height-this.minNode.height),
-                    Math.abs(new_node.height-this.maxNode.height))
-            > 1) { //check if the tree is balanced using both extremes
-                counter = rotate(balance, key, node, counter);
-            }
+        while (x.isRealNode()) {
+           balance = x.getbalanced();
+           if (balance>1 || balance<-1) {
+               return rotate(balance, x.key, x);
+           }
+           x.height+=1;
+           x = x.parent;
+        }
+
+        return 0;
     }
     
     
-    private int rotate(int balance, int key, AVLNode node, int counter) {
+    private int rotate(int balance, int key, AVLNode node) {
     	System.out.println();
     	System.out.println("------------------rotate------------------");
     	System.out.println("balance = " + balance + " key that inserted = "+ key);
     	System.out.println();
     	if (balance > 1 && key < node.getLeft().getKey()) {
-        	counter++;
-            AVLNode ll = node.rightRotate(node);
+            node.rightRotate();
+            return 1;
         }
  
         // Right Right Case
-        if (balance < -1 && key > node.getRight().getKey()) {
-        	counter++;
-        	AVLNode rr = node.leftRotate(node);
+        else if (balance < -1 && key > node.getRight().getKey()) {
+        	node.leftRotate();
+            return 1;
         }
  
         // Left Right Case
-        if (balance > 1 && key > node.getLeft().getKey()) {
+        else if (balance > 1 && key > node.getLeft().getKey()) {
         	System.out.println("left then rigth ");
-        	counter+=2;
-            AVLNode lr= node.rightRotate(node);
-            AVLNode x = lr.leftRotate(lr);
+            node.left_son.leftRotate();
+            node.rightRotate();
+            return 2;
         }
  
         // Right Left Case
-        if (balance < -1 && key < node.getRight().getKey()) {
+        else if (balance < -1 && key < node.getRight().getKey()) {
         	System.out.println("rigth then left");
-        	counter+=2;
-            node.setRight(node.getRight().rightRotate(node.getRight()));
-            AVLNode rl = node.leftRotate(node);
+            node.right_son.rightRotate();
+            node.leftRotate();
+            return 2;
         }
-        return counter;
+        return 0;
     }
     
     
@@ -259,7 +282,7 @@ public class AVLTree {
     	if(empty())
     		return new int [0];
     	int[] arr = new int[this.size]; 
-    	int [] keys = in_order_keys_array(arr,this.root,0);
+    	int [] keys = in_order_keys_array(arr,this.getRoot(),0);
         return keys;             
     }
     
@@ -285,7 +308,7 @@ public class AVLTree {
     	if(empty())
     		return new boolean [0];
     	boolean [] arr = new boolean[this.size]; 
-    	boolean [] info = in_order_value_array(arr,this.root,0);
+    	boolean [] info = in_order_value_array(arr,this.getRoot(),0);
         return info;
     }
     private boolean [] in_order_value_array (boolean [] arr, AVLNode node, int index) {
@@ -314,7 +337,7 @@ public class AVLTree {
      * O(1)
      */
     public AVLNode getRoot() {
-        return this.root;
+        return this.root.getSon();
     }
 
     
@@ -323,7 +346,7 @@ public class AVLTree {
      * O(logn)
      */
     private AVLNode FindNodeByKey(int key) { //O(logn)
-    	AVLNode node = this.root;
+    	AVLNode node = this.getRoot();
     	while(node.info != null) {
     		if(key == node.getKey()) 
     			return node;
@@ -416,7 +439,7 @@ public class AVLTree {
 		AVLTree tree = new AVLTree();
         if(!tree.empty())
         	System.out.println("erorr empty()");
-        System.out.println("initial root = " + tree.root.getValue());
+        System.out.println("initial root = " + tree.getRoot().getValue());
         
         
 		int[] keys = {5, 10, 8, 3, 7};
@@ -428,7 +451,7 @@ public class AVLTree {
            System.out.println("number of rotation = " + x);
 //           printnode(tree.root);
            System.out.println("the tree =");
-           inorder(tree.root);
+           inorder(tree.getRoot());
            System.out.println();
         }
         
@@ -478,7 +501,9 @@ public class AVLTree {
     	private int height;
     	private boolean sub_tree_xor; // keeps the xor between all key is node's sub tree
     	public boolean height_change_insert = false;
-    	
+
+        public AVLNode() { this.info=null; }
+
     	public AVLNode(Boolean info) {
     		this.info = info;
     	}
@@ -504,17 +529,20 @@ public class AVLTree {
         //sets left child
         public void setLeft(AVLNode node) {
             this.left_son = node;
+            node.setParent(this);
         }
 
         //returns left child
 		//if called for virtual node, return value is ignored.
         public AVLNode getLeft() {
-            return this.left_son; 
+            return this.left_son;
+
         }
 
         //sets right child
         public void setRight(AVLNode node) {
             this.right_son = node;
+            node.setParent(this);
         }
 
         //returns right child 
@@ -557,54 +585,82 @@ public class AVLTree {
         	return this.getLeft().getHeight() - this.getRight().getHeight();
         }
         
-        private AVLNode rightRotate(AVLNode parent) {
-        	System.out.println();
-        	System.out.println("right rotation");
-        	AVLNode insered = parent.getLeft();
-        	AVLNode inserted_right_son = insered.getRight();
-//        	System.out.println("x = : ");
-//        	printnode(insered);
-//        	System.out.println("y = : ");
-//        	printnode(parent);
-//        	System.out.println("T2 = : ");
-//        	printnode(inserted_right_son);
+        private AVLNode rightRotate() {
+            AVLNode replacementNode = this.left_son;
+            AVLNode nodeParent = this.parent;
             
         	// Perform rotation
-            insered.setRight(parent) ;
-            parent.setLeft(inserted_right_son);
+            if (nodeParent.getLeft()==this) {
+                nodeParent.setLeft(replacementNode);
+            } else {
+                nodeParent.setRight(replacementNode);
+            }
+            this.setLeft(replacementNode.getRight());
+            replacementNode.setRight(this);
 
             // Update heights
-            parent.setHeight(Math.max(parent.getLeft().getHeight(), parent.getRight().getHeight()) +1 );
-            insered.setHeight(Math.max(insered.getLeft().getHeight(), insered.getRight().getHeight()) +1 );
-            return insered;
+            parent.setHeight(Math.max(nodeParent.getLeft().getHeight(), nodeParent.getRight().getHeight()) +1 );
+            replacementNode.setHeight(Math.max(replacementNode.getLeft().getHeight(), replacementNode.getRight().getHeight()) +1 );
+            return replacementNode;
         }
 
-        private AVLNode leftRotate(AVLNode future_left_son) {
-        	System.out.println();
-        	System.out.println("~~~~~left rotation~~~~~");
-        	AVLNode inserded = future_left_son.getRight();
-        	AVLNode T2 = future_left_son.getParent();
+        private AVLNode leftRotate() {
+            AVLNode replacementNode = this.right_son;
+            AVLNode nodeParent = this.parent;
+            
+        	// Perform rotation
+            if (nodeParent.getLeft()==this) {
+                nodeParent.setLeft(replacementNode);
+            } else {
+                nodeParent.setRight(replacementNode);
+            }
 
-        	System.out.println("future_left_son = : ");
-        	printnode(future_left_son);
-        	System.out.println("inserded = : ");
-        	printnode(inserded);
-        	System.out.println("T2 = : ");
-        	printnode(T2);
-        	
-            // Perform rotation
-            inserded.setLeft(future_left_son);
-            future_left_son.setParent(inserded);
-            future_left_son.setRight(new AVLNode(null));
-            inserded.setParent(T2);
+            this.setRight(replacementNode.getLeft());
+            replacementNode.setLeft(this);
 
-            //  Update heights
-            future_left_son.setHeight(Math.max(future_left_son.getLeft().getHeight(), future_left_son.getRight().getHeight())+1); 
-            inserded.setHeight(Math.max(inserded.getLeft().getHeight(), inserded.getRight().getHeight()) +1);
-
-            return inserded;
+            // Update heights
+            parent.setHeight(Math.max(nodeParent.getRight().getHeight(), nodeParent.getLeft().getHeight()) +1 );
+            replacementNode.setHeight(Math.max(replacementNode.getRight().getHeight(), replacementNode.getLeft().getHeight()) +1 );
+            return replacementNode;
         }
         
+    }
+
+    public class AVlRoot extends AVLNode{
+        final Boolean info = null;
+        private AVLNode son = new AVLNode(null);
+        private AVLNode parent;
+
+        public AVlRoot() { }
+
+        public AVLNode getSon() {
+            return this.son;
+        }
+
+        public AVLNode getRight() {
+            return this.getSon();
+        }
+
+        public AVLNode getLeft() {
+            return this.getSon();
+        }
+
+        public void setSon(AVLNode son) {
+            this.son = son;
+            son.setParent(this);
+        }
+
+        public void setLeft(AVLNode son) {
+           this.setSon(son);
+        }
+
+        public void setRight(AVLNode son) {
+            this.setSon(son);
+        }
+
+        public int getHeight () {
+            return -1;
+        }
     }
 
 }
