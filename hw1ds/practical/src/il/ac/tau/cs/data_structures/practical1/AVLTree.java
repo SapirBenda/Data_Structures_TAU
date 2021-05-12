@@ -502,7 +502,9 @@ public class AVLTree {
     	private boolean sub_tree_xor; // keeps the xor between all key is node's sub tree
     	public boolean height_change_insert = false;
 
-        public AVLNode() { this.info=null; }
+        public AVLNode() {
+            this.info=null;
+        }
 
     	public AVLNode(Boolean info) {
     		this.info = info;
@@ -599,8 +601,9 @@ public class AVLTree {
             replacementNode.setRight(this);
 
             // Update heights
-            parent.setHeight(Math.max(nodeParent.getLeft().getHeight(), nodeParent.getRight().getHeight()) +1 );
-            replacementNode.setHeight(Math.max(replacementNode.getLeft().getHeight(), replacementNode.getRight().getHeight()) +1 );
+            this.setHeight(Math.max(nodeParent.getLeft().getHeight(), nodeParent.getRight().getHeight()));
+            replacementNode.setHeight(Math.max(replacementNode.getLeft().getHeight(), replacementNode.getRight().getHeight()));
+            nodeParent.setHeight(Math.max(nodeParent.getRight().getHeight(), nodeParent.getLeft().getHeight()));
             return replacementNode;
         }
 
@@ -619,8 +622,9 @@ public class AVLTree {
             replacementNode.setLeft(this);
 
             // Update heights
-            parent.setHeight(Math.max(nodeParent.getRight().getHeight(), nodeParent.getLeft().getHeight()) +1 );
-            replacementNode.setHeight(Math.max(replacementNode.getRight().getHeight(), replacementNode.getLeft().getHeight()) +1 );
+            this.setHeight(Math.max(this.getRight().getHeight(), this.getLeft().getHeight()));
+            replacementNode.setHeight(Math.max(replacementNode.getRight().getHeight(), replacementNode.getLeft().getHeight()));
+            nodeParent.setHeight(Math.max(nodeParent.getRight().getHeight(), nodeParent.getLeft().getHeight()));
             return replacementNode;
         }
         
