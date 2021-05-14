@@ -3,6 +3,8 @@ package il.ac.tau.cs.data_structures.practical1;
 
 import java.util.Arrays;
 
+import il.ac.tau.cs.data_structures.practical1.AVLTree.AVLNode;
+
 /**
  * public class AVLNode
  * <p>
@@ -21,8 +23,7 @@ public class AVLTree {
 	private int size;
 	private AVLNode minNode;
 	private AVLNode maxNode;
-	
-	
+		
 
     /**
      * This constructor creates an empty AVLTree.
@@ -43,7 +44,7 @@ public class AVLTree {
      * O(1)
      */
     public boolean empty() {
-        return (this.getRoot().info == null) ? true : false;
+        return (this.getRoot().getValue() == null) ? true : false;
     }
 
     /**
@@ -55,7 +56,7 @@ public class AVLTree {
      */
     public Boolean search(int k) {
     	AVLNode x = this.getRoot();
-    	while(x.info != null) {
+    	while(x.getValue() != null) {
     		if(k == x.getKey()) 
     			return x.getValue();
     		else if (k<x.getKey())
@@ -63,7 +64,7 @@ public class AVLTree {
     		else
     			x = x.getRight();
     	}
-    	return null;
+    	return null; // k is not a key in the tree
     }
 
     /**
@@ -76,65 +77,7 @@ public class AVLTree {
      * returns -1 if an item with key k already exists in the tree.
      */
     public int insert(int k, boolean i) {
-        /** 
-    	AVLNode External_leaf = new AVLNode(null);
-    	int balance, counter =0;
-    	AVLNode new_node = new AVLNode(i);
-    	new_node.setKey(k);
-    	new_node.setHeight(0);
-    	new_node.setLeft(External_leaf);
-    	new_node.setRight(External_leaf);
-    	AVLNode parent = new AVLNode(null);
-    	AVLNode curr = this.root;
-    	
-    	clear_check_height(this.root);
-    	
-    	while( curr.getValue() != null) {
-    		parent = curr;
-    		if(k < curr.getKey())
-    			curr = curr.getLeft();
-    		else
-    			curr = curr.getRight();
-    		parent.setHeight(parent.getHeight()+1);
-    		parent.height_change_insert = true;
-    	}
-    	
-    	new_node.setParent(parent);
-  
-    	if (parent.getValue() == null) { // the tree was empty
-    		this.root =new_node;
-			this.root.setHeight(1);
-			this.root.setLeft(External_leaf);
-			this.root.setRight(External_leaf);
-			this.root.setParent(parent);
-			return 0;
-			
-    	}
-    	else if(k < parent.getKey())
-    		parent.setLeft(new_node);
-    	else {
-    		parent.setRight(new_node);
-    	}
-    	
-    	
-    	while(parent.getValue() != null) {
-    		System.out.println("tree in check = ");
-    		inorder(this.root);
-    		balance = parent.getbalanced();
-    		System.out.println(parent.getKey() + " --->   balance = " + balance);
-    		System.out.println("left height = " + parent.getLeft().getHeight() + " right hight = " + parent.getRight().getHeight());
-    		if (Math.abs(balance) < 2 && !parent.height_change_insert) {
-    			break;
-    		}
-    		else if(Math.abs(balance) < 2 && parent.height_change_insert)
-    			parent = parent.getParent();
-    		else // Math.abs(balance) == 2 
-    			counter = rotate(balance,new_node.getKey(),parent,0);
-    	}
-    	this.size ++;
-       return counter;
-       */
-
+        
         Boolean add_left = null;
        //find the correct place to add node
         AVLNode x = this.getRoot();
@@ -202,7 +145,7 @@ public class AVLTree {
     private int rotate(int balance, AVLNode node) {
         // Left Right Case
         if (balance > 1 && node.getLeft().getbalanced()<0) {
-        	System.out.println("left then right ");
+//        	System.out.println("left then right ");
             node.getLeft().leftRotate();
             node.rightRotate();
             return 2;
@@ -210,7 +153,7 @@ public class AVLTree {
  
         // Right Left Case
         else if (balance < -1 && node.getRight().getbalanced()>0) {
-        	System.out.println("right then left");
+//        	System.out.println("right then left");
             node.getRight().rightRotate();
             node.leftRotate();
             return 2;
@@ -330,9 +273,7 @@ public class AVLTree {
      * O(1)
      */
     public Boolean min() {
-    	if(empty())
-    		return null;
-        return this.minNode.getValue(); 
+        return(empty()) ? null : this.minNode.getValue(); 
     }
 
     /**
@@ -343,9 +284,7 @@ public class AVLTree {
      * O(1)
      */
     public Boolean max() {
-    	if(empty())
-    		return null;
-        return this.maxNode.getValue();
+        return(empty()) ? null: this.maxNode.getValue();
     }
 
     /**
@@ -359,14 +298,16 @@ public class AVLTree {
     	if(empty())
     		return new int [0];
     	int[] arr = new int[this.size]; 
-    	int [] keys = in_order_keys_array(arr,this.getRoot(),0);
+    	int [] index = {0};
+    	int [] keys = in_order_keys_array(arr,this.getRoot(),index);
         return keys;             
     }
     
-    private int [] in_order_keys_array (int [] arr, AVLNode node, int index) {
-    	if (node.getValue() != null)
+    private int [] in_order_keys_array (int [] arr, AVLNode node, int [] index) {
+    	if (node.getLeft().getValue() != null)
     		in_order_keys_array(arr,node.getLeft(), index);
-    	arr[index++] = node.getKey();
+    	arr[index[0]] = node.getKey();
+    	index[0] = index[0] +1;
     	if(node.getRight().getValue() != null)
     		in_order_keys_array(arr, node.getRight(),index);
     	return arr;
@@ -389,7 +330,7 @@ public class AVLTree {
         return info;
     }
     private boolean [] in_order_value_array (boolean [] arr, AVLNode node, int index) {
-    	if (node.getValue() != null)
+    	if (node.getLeft().getValue() != null)
     		in_order_value_array(arr,node.getLeft(), index);
     	arr[index++] = node.getValue();
     	if(node.getRight().getValue() != null)
@@ -422,7 +363,7 @@ public class AVLTree {
      * @pre key in tree
      * O(logn)
      */
-    private AVLNode FindNodeByKey(int key) { //O(logn)
+    public AVLNode FindNodeByKey(int key) { //O(logn)
     	AVLNode node = this.getRoot();
     	while(node.info != null) {
     		if(key == node.getKey()) 
@@ -432,7 +373,7 @@ public class AVLTree {
     		else
     			node = node.getRight();
     	}
-    	return null; // never get here 
+    	return null; // never gets here 
     }
     
     /**
@@ -474,20 +415,6 @@ public class AVLTree {
         return parent;
         }
         
-    
-//    private int binary_search(int[] arr, int k) {
-//    	int left =0, right = arr.length-1 , mid = 0;
-//    	while( left <= right) {
-//    		mid = (left +(right -1)) / 2;
-//    		if (arr[mid] == k)
-//    			return mid;
-//    		else if( arr[mid] < k)
-//    			left = mid +1;
-//    		else 
-//    			right = mid -1;
-//    	}
-//    	return -1; // k not in arr
-//    }
 
     /**
      * public boolean succPrefixXor(int k)
@@ -511,51 +438,6 @@ public class AVLTree {
     }
 
     
-	public static void main(String[] args) {
-		
-		AVLTree tree = new AVLTree();
-        if(!tree.empty())
-        	System.out.println("erorr empty()");
-        System.out.println("initial root = " + tree.getRoot().getValue());
-        
-        
-		int[] keys = {5, 10, 8, 3, 7};
-        boolean[] vals = {true, true, false, false, true};
-        
-       int x;
-        for (int i = 0; i < keys.length; i++) {
-           x =  tree.insert(keys[i], vals[i]);
-           System.out.println("number of rotation = " + x);
-//           printnode(tree.root);
-           System.out.println("the tree =");
-           inorder(tree.getRoot());
-           System.out.println();
-        }
-        
-//        inorder(tree.root);
-        
-        
-        
-	}
-
-    public static void inorder(AVLNode r) {
-        if (r.getValue() != null)        {
-            inorder(r.getLeft());
-            System.out.println(r.getKey() +" ");
-            inorder(r.getRight());
-        }
-    }
-    public static void printnode(AVLNode r) {
-        System.out.println("info = " + r.getValue() + " key = " + r.getKey());
-        }
-    public static void clear_check_height(AVLNode root) {
-        if (root.getValue() != null)        {
-        	clear_check_height(root.getLeft());
-            root.height_change_insert = false;
-            clear_check_height(root.getRight());
-        }
-    }
-	
 
     /**
      * public class AVLNode
@@ -577,7 +459,6 @@ public class AVLTree {
     	private AVLNode parent;
     	private int height;
     	private boolean sub_tree_xor; // keeps the xor between all key is node's sub tree
-    	public boolean height_change_insert = false;
 
         public AVLNode() {
             this.info=null;
