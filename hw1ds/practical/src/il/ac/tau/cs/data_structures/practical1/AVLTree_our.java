@@ -3,7 +3,7 @@ package il.ac.tau.cs.data_structures.practical1;
 
 import java.util.Arrays;
 
-import il.ac.tau.cs.data_structures.practical1.AVLTree.AVLNode;
+import il.ac.tau.cs.data_structures.practical1.AVLTree_our.AVLNode;
 
 /**
  * public class AVLNode
@@ -17,7 +17,7 @@ import il.ac.tau.cs.data_structures.practical1.AVLTree.AVLNode;
  * according to your needs.
  */
 
-public class AVLTree {
+public class AVLTree_our {
 
 	private AVlRoot root;
 	private int size;
@@ -29,7 +29,7 @@ public class AVLTree {
      * This constructor creates an empty AVLTree.
      * O(1)
      */  
-    public AVLTree(){
+    public AVLTree_our(){
     	this.root = new AVlRoot();
     	this.size =0;
     	this.minNode = this.getRoot();
@@ -81,10 +81,10 @@ public class AVLTree {
         Boolean add_left = null;
        //find the correct place to add node
         AVLNode x = this.getRoot();
-        while(x.info != null && add_left == null) {
+        while(x.getValue() != null && add_left == null) {
           if(k == x.getKey())
               return -1;
-          else if (k<x.getKey()) {
+          else if (k < x.getKey()) {
               if (x.getLeft().isRealNode())
                 x = x.getLeft();
               else
@@ -113,6 +113,7 @@ public class AVLTree {
 
         if (this.empty()) {
             this.root.setSon(new_node);
+            this.minNode = new_node;
             return 0;
         } else if (add_left) {
     	    x.setLeft(new_node);
@@ -121,11 +122,15 @@ public class AVLTree {
         }
 
         //update max/min
-        if (k < this.minNode.key) {
+        if (k < this.minNode.getKey()) {
+//        	System.out.println("node.key in min = " + new_node.getKey());
             this.minNode = new_node;
+//            System.out.println("this.min = " + this.minNode.getKey());
         } 
-        if (k>this.maxNode.key) {
+        if (k>this.maxNode.getKey()) {
+//        	System.out.println("node.key in max = " + new_node.getKey());
             this.maxNode = new_node;
+//            System.out.println("this.max = " + this.maxNode.getKey());
         }
 
         //balance tree
@@ -186,18 +191,22 @@ public class AVLTree {
      */
     public int delete(int k) {
         AVLNode x = this.getRoot();
-        while(x.info != null && x.getKey()!=k) {
+        while(x.getValue() != null && x.getKey()!=k) {
             if (k<x.getKey())
                 x = x.getLeft();
             else
                 x = x.getRight();
         }
-        if (x.info==null)
+        if (x.getValue() == null)
             return -1;
 
         //update size
         this.size -= 1;
-
+        if(x.getKey() == this.minNode.getKey())
+        	this.minNode = x.getParent();
+        if(x.getKey() == this.maxNode.getKey()) 
+        	this.maxNode = x.getParent();   
+        	
         AVLNode balanceNode = null;
         int balance = 0;
         int counter = 0;
@@ -208,7 +217,7 @@ public class AVLTree {
 
             //old children
             balanceNode = replacementNode.getParent();
-            if (balanceNode==x){
+            if (balanceNode == x){
                 balanceNode = replacementNode;
 
                 //new children
@@ -231,7 +240,6 @@ public class AVLTree {
                 replacementNode.setRight(x.getRight());
 
             }
-
             //update parent
             replacementNode.setParent(x.getParent());
             if (x.getParent().getLeft()==x)
@@ -273,7 +281,7 @@ public class AVLTree {
      * O(1)
      */
     public Boolean min() {
-        return(empty()) ? null : this.minNode.getValue(); 
+        return(empty() == true) ? null : this.minNode.getValue(); 
     }
 
     /**
@@ -325,14 +333,16 @@ public class AVLTree {
     public boolean[] infoToArray() {
     	if(empty())
     		return new boolean [0];
-    	boolean [] arr = new boolean[this.size]; 
-    	boolean [] info = in_order_value_array(arr,this.getRoot(),0);
+    	boolean [] arr = new boolean[this.size];
+    	int [] index = {0};
+    	boolean [] info = in_order_value_array(arr,this.getRoot(),index);
         return info;
     }
-    private boolean [] in_order_value_array (boolean [] arr, AVLNode node, int index) {
+    private boolean [] in_order_value_array (boolean [] arr, AVLNode node, int [] index) {
     	if (node.getLeft().getValue() != null)
     		in_order_value_array(arr,node.getLeft(), index);
-    	arr[index++] = node.getValue();
+    	arr[index[0]] = node.getValue();
+    	index[0] = index[0] +1;
     	if(node.getRight().getValue() != null)
     		in_order_value_array(arr, node.getRight(),index);
     	return arr;
@@ -401,6 +411,8 @@ public class AVLTree {
      */
     public AVLNode successor(AVLNode node){
     	AVLNode curr = node;
+    	if(node.getKey() == this.maxNode.getKey() && node.getValue() == this.maxNode.getValue()) // if node == this.maxNode than it dosent have successor
+    		return null;
         if (node.getRight().info != null) {
         	curr = curr.getRight();
         	while(curr.getLeft().info != null)
@@ -428,14 +440,17 @@ public class AVLTree {
      */
     public boolean succPrefixXor(int k){
     	AVLNode node = this.minNode;
-    	int tcounter =0;
-    	while(node.key <=k) {
+    	int true_counter =0;
+    	while(node != null && node.getKey() <= k) {
     		if(node.getValue())
-    			tcounter++;
+    			true_counter++;
     		node = successor(node);
     	}
-        return (tcounter % 2 == 1) ? true: false;
+        return (true_counter % 2 == 1) ? true: false;
     }
+    public static void printnode(AVLNode r) {
+        System.out.println("info = " + r.getValue() + ", key = " + r.getKey());
+        }
 
     
 

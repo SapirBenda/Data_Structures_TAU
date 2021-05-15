@@ -2,14 +2,15 @@ package il.ac.tau.cs.data_structures.practical1;
 
 import java.util.Arrays;
 
-import il.ac.tau.cs.data_structures.practical1.AVLTree.AVLNode;
+import il.ac.tau.cs.data_structures.practical1.AVLTree_our.AVLNode;
+import il.ac.tau.cs.data_structures.practical1.AVLTree_web.Node;
 
-public class Test_AVL_sapir extends AVLTree {
+public class Test_AVL_sapir extends AVLTree_our {
 	
 	public static void main(String[] args) {
-		
-		AVLTree tree = new AVLTree();
-        if(!tree.empty())
+		AVLTree_web tree_web = new AVLTree_web ();
+		AVLTree_our tree_our = new AVLTree_our();
+        if(!tree_our.empty())
         	System.out.println("erorr empty()");
         
         int[] keys = {5, 10, 8, 13, 7};
@@ -17,24 +18,31 @@ public class Test_AVL_sapir extends AVLTree {
         
        int x;
         for (int i = 0; i < keys.length; i++) {
-           x =  tree.insert(keys[i], vals[i]);  
+           x =  tree_our.insert(keys[i], vals[i]);  
         }
+//        for (int i = 0; i < keys.length; i++) {
+//        	Node n = new Node(keys[i]);
+//            n = tree_web.insertNode(n, keys[i]);  
+//         }
+//        System.out.println("the tree = ");
+//        printTree_our(tree_our.getRoot(), "", true);
+//        printTree_web(tree_web.root,"",true);
         
         check_massege("empty()");
-        Boolean e = tree.empty();
-        AVLTree tree2 = new AVLTree();
-        Boolean e2 = tree2.empty();
+        Boolean e = tree_our.empty();
+        AVLTree_our tree2_our = new AVLTree_our();
+        Boolean e2 = tree2_our.empty();
         if(e) System.out.println("error empty- not empty");
         else if(!e2) System.out.println("error empty- empty");
         else printdone("empty()");
         
         check_massege("search(int key)");
-        Boolean s1 = tree.search(5);
-        Boolean s2 = tree.search(10);
-        Boolean s3 = tree.search(8);
-        Boolean s4 = tree.search(13);
-        Boolean s5 = tree.search(0);
-        Boolean s6 = tree.search(20);
+        Boolean s1 = tree_our.search(5);
+        Boolean s2 = tree_our.search(10);
+        Boolean s3 = tree_our.search(8);
+        Boolean s4 = tree_our.search(13);
+        Boolean s5 = tree_our.search(0);
+        Boolean s6 = tree_our.search(20);
         if(!s1) System.out.println("error search 5");
         else if(!s2) System.out.println("error search 10");
         else if(s3) System.out.println("error search 8");
@@ -44,69 +52,177 @@ public class Test_AVL_sapir extends AVLTree {
         else printdone("search(int key)");
         
         check_massege("inset(int key, boolean value)");
-        int x1 = tree.insert(4, false);///
-        int x2 = tree.insert(25, true);////
-        int x3 = tree.insert(5, true);
-        int x4 = tree.insert(4, false);
-        int x5 = tree.insert(9, false);///
-        int x6 = tree.insert(15, false);///
-        int x7 = tree.insert(18, false);///
-        int x8 = tree.insert(40, false);//
-        int x9 = tree.insert(3, true);//
-        int x10 = tree.insert(0, false);//
+        int x1 = tree_our.insert(4, false);///
+        int x2 = tree_our.insert(25, true);////
+        int x3 = tree_our.insert(5, true);
+        int x4 = tree_our.insert(4, false);
+        int x5 = tree_our.insert(9, false);///
+        int x6 = tree_our.insert(15, false);///
+        int x7 = tree_our.insert(18, false);///
+        int x8 = tree_our.insert(40, false);//
+        int x9 = tree_our.insert(3, true);//
+        int x10 = tree_our.insert(0, false);//
         if(x1!=0) System.out.println("error insert - 4");
         else if(x2!=1) System.out.println("error insert - 25");
         else if(x3!=-1) System.out.println("error insert - 5 in tree + differ value");
         else if(x4!=-1) System.out.println("error insert - 4 in tree");
-        else if(tree.getRoot().getKey() != 13) System.out.println("error insert- 40");
-        else if(tree.FindNodeByKey(0).getParent().getKey()!= 3) System.out.println("error insert- 0");
-        else if(tree.FindNodeByKey(4).getParent().getKey()!= 3) System.out.println("error insert- 4");
-        else if(tree.FindNodeByKey(8).getParent().getKey()!= 13) System.out.println("error insert- 8");
-        else if(tree.FindNodeByKey(18).getParent().getKey()!= 13) System.out.println("error insert- 18");
+        else if(tree_our.getRoot().getKey() != 13) System.out.println("error insert- 40");
+        else if(tree_our.FindNodeByKey(0).getParent().getKey()!= 3) System.out.println("error insert- 0");
+        else if(tree_our.FindNodeByKey(4).getParent().getKey()!= 3) System.out.println("error insert- 4");
+        else if(tree_our.FindNodeByKey(8).getParent().getKey()!= 13) System.out.println("error insert- 8");
+        else if(tree_our.FindNodeByKey(18).getParent().getKey()!= 13) System.out.println("error insert- 18");
         else printdone("inset(int key, boolean value)");
 	
+//        System.out.println("the tree after insert = ");
+//        printTree_our(tree_our.getRoot(), "", true);
+        
+        check_massege("min");
+        Boolean m = tree_our.min();
+        if(m) System.out.println("error min - 0");
+        int w = tree_our.delete(0);
+        Boolean m1 = tree_our.min();
+        if(!m1) System.out.println("error min - 3");
+        Boolean m2 = tree2_our.min();
+        if(m2 != null) System.out.println("error min - null");
+        printdone("min()");
+        
+//        System.out.println("the tree after min = ");
+//        printTree_our(tree_our.getRoot(), "", true);
+        
+        check_massege("max");
+        Boolean l = tree_our.max();
+        if(l) System.out.println("error max - 40");
+        int w2 = tree_our.delete(40);
+        Boolean l1 = tree_our.max();
+        if(!l1) System.out.println("error max - 25");
+        Boolean l2 = tree2_our.max();
+        if(l2 != null) System.out.println("error max - null");
+        printdone("max()");
+        
+//        System.out.println("the tree after max = ");
+//        printTree_our(tree_our.getRoot(), "", true);
+        
+        
+        check_massege("KeysToArrays()");
+        int [] arr = tree_our.keysToArray();
+        int [] c = {3,4,5,7,8,9,10,13,15,18,25};
+        if(!Arrays.equals(arr, c)) System.out.println("error keysToArray 1");
+        int u = tree_our.insert(2, false);
+        int u2 = tree_our.delete(7);
+        int [] arr2 = tree_our.keysToArray();
+        int[] c2 = {2,3,4,5,8,9,10,13,15,18,25};
+        if(!Arrays.equals(arr2, c2)) System.out.println("error keysToArray 2");
+        int [] c3 = new int[0];
+        int [] arr3 = tree2_our.keysToArray();
+        if(!Arrays.equals(arr3, c3))System.out.println("error keysToArray 3");
+        printdone("KeysToArrays()");
+        
+        AVLTree_our tree3_our = new AVLTree_our();
+        int x20;
+        for (int i = 0; i < keys.length; i++) {
+           x20 =  tree3_our.insert(keys[i], vals[i]);  
+        }
+//        System.out.println("the tree after keystoarrays() = ");
+//        printTree_our(tree_our.getRoot(), "", true);
+//        inorder(tree3_our.getRoot());
+//        inorder(tree_our.getRoot());
+        
+        check_massege("infoToArrays()");
+        boolean [] arr4 = tree3_our.infoToArray();
+        boolean [] arr7 = {true,true,false,true,false};
+        boolean [] arr5 = tree_our.infoToArray();
+        boolean [] arr6 = {false,true,false,true,false,false,true,false,false,false,true};
+        boolean [] c4= new boolean [0];
+        if(!Arrays.equals(arr4, arr7 )) System.out.println("error infoToArray - 1");
+        else if(!Arrays.equals(arr5, arr6)) System.out.println("error infoToArray - 2");
+        else if (!Arrays.equals(tree2_our.infoToArray(), c4)) System.out.println("error infoToArray - empty tree");
+        else printdone("InfoToArrays()");
+        
+        AVLTree_our tree4_our = new AVLTree_our();
+        int x21;
+        for (int i = 0; i < keys.length; i++) {
+           x21 =  tree4_our.insert(keys[i], vals[i]);  
+        }
+        x21 = tree4_our.insert(6, false);
+        
+        check_massege("Size()");
+        if(tree_our.size() != 11)  System.out.println("erroe size - 1");
+        else if(tree3_our.size() != 5) System.out.println("erroe size - 2");
+        else if(tree2_our.size() != 0) System.out.println("erroe size - empty tree");
+        else if(tree4_our.size() != 6) System.out.println("erroe size - 3");
+        else printdone("Size()");
+        
+//        System.out.println("tree3 = ");
+//        printTree_our(tree3_our.getRoot(), "", true);
 //        System.out.println("tree = ");
-//        inorder(tree.getRoot());
-//        System.out.println();
+//        printTree_our(tree_our.getRoot(), "", true);
+//        System.out.println("tree2 = ");
+//        printTree_our(tree2_our.getRoot(), "", true);
         
-//        check_massege("min");
-//        Boolean m = tree.min();
-//        if(m) System.out.println("error min - 0");
-//        int w = tree.delete(0);
-//        Boolean m1 = tree.min();
-//        if(!m1) System.out.println("error min - 3");
-//        Boolean m2 = tree2.min();
-//        if(m2 != null) System.out.println("error min - null");
-//        printdone("min()");
-//        
-//        check_massege("max");
-//        Boolean l = tree.max();
-//        if(l) System.out.println("error max - 40");
-//        int w2 = tree.delete(40);
-//        Boolean l1 = tree.max();
-//        if(!l1) System.out.println("error max - 25");
-//        Boolean l2 = tree2.max();
-//        if(l2 != null) System.out.println("error max - null");
-//        printdone("max()");
+        check_massege("GetRoot()");
+        AVLNode a3 = tree3_our.getRoot();
+        AVLNode a = tree_our.getRoot();
+        AVLNode a2 = tree2_our.getRoot();
+        if(a3.getValue()|| a3.getKey() != 8) System.out.println("error getRoot - 1");     
+        else if(a.getValue()|| a.getKey() != 13) System.out.println("error getRoot - 2");
+        else if(a2.getValue() != null && a2.getKey() != -1) System.out.println("error getRoot - empty tree");
+        else printdone("GetRoot()");
         
-
+        check_massege("Successor(AVLNode node)");
+        AVLNode e1 = tree_our.FindNodeByKey(3);
+        AVLNode e11 = tree_our.successor(e1);
+        AVLNode e3 = tree_our.FindNodeByKey(9);
+        AVLNode e4 = tree_our.FindNodeByKey(13);
+        AVLNode e5 = tree_our.FindNodeByKey(4);
+        AVLNode e6 = tree_our.FindNodeByKey(25);
+        AVLNode e33 = tree_our.successor(e3);
+        AVLNode e44 = tree_our.successor(e4);
+        AVLNode e55 = tree_our.successor(e5);
+        AVLNode e66 = tree_our.successor(e6);
+       if(e11.getValue() || e11.getKey() != 4) System.out.println("error successor - 3"); 
+       else if(!e33.getValue() || e33.getKey() != 10) System.out.println("error successor - 9");
+       else if(e44.getValue() || e44.getKey() != 15) System.out.println("error successor - 13"); 
+       else if(!e55.getValue() || e55.getKey() != 5) System.out.println("error successor - 4");
+       else if(e66 != null) System.out.println("error successor - max successor"); 
+       else printdone("Successor(AVLNode node)");
+       
+       
+//       inorder(tree_our.getRoot());
+       
+       check_massege("succPrefixXor(int k)");
+       boolean y1 = tree_our.succPrefixXor(3); // true
+       boolean y2 = tree_our.succPrefixXor(5); // false
+       boolean y3 = tree_our.succPrefixXor(10);// true
+       boolean y4 = tree_our.succPrefixXor(8);// false
+       boolean y5 = tree_our.succPrefixXor(25);// false
+       boolean y6 = tree_our.succPrefixXor(13);// true
+       if(!y1) System.out.println("error succPrefixXor - 3");
+       else if(y2) System.out.println("error succPrefixXor - 5");
+       else if(!y3) System.out.println("error succPrefixXor - 10");
+       else if(y4) System.out.println("error succPrefixXor - 8");
+       else if(y5) System.out.println("error succPrefixXor - 25");
+       else if(!y6) System.out.println("error succPrefixXor - 13");
+       else printdone("succPrefixXor(int k)");
+       
+       
         check_massege("delete(int key)");
-        int y1 = tree.delete(6);
-        int y2 = tree.delete(8);
-        int y3 = tree2.delete(8);
-        int y4 = tree.delete(13);
-        int y5 = tree.delete(50);
-        int y6 = tree.delete(9);
-        if(y1 != -1) System.out.println("error delete - 6 not in tree");
-        else if(y2 != 2) System.out.println("error delete - 8");
-        else if(y3 != -1) System.out.println("error delete - tree2 empty");
-        else if(y4 != 2) System.out.println("error delete - 13");
-        else if(tree.getRoot().getKey() != 10) System.out.println("error delete - root");
-        else if(tree.getRoot().getLeft().getKey() != 5) System.out.println("error delete - left son");
-        else if(tree.getRoot().getRight().getKey() != 18) System.out.println("error delete - right son");
-        else if(y5 != -1) System.out.println("error delete - 50");
-        else if(y6 != 0) System.out.println("error delete - 9");
+        int y11 = tree_our.delete(6);
+        int y22 = tree_our.delete(8);
+        int y33 = tree2_our.delete(8);
+        int y44 = tree_our.delete(13);
+        int y55 = tree_our.delete(50);
+        int y66 = tree_our.delete(9);
+        if(y11 != -1) System.out.println("error delete - 6 not in tree");
+        else if(y22 != 2) System.out.println("error delete - 8");
+        else if(y33 != -1) System.out.println("error delete - tree2 empty");
+        else if(y44 != 2) System.out.println("error delete - 13");
+        else if(tree_our.getRoot().getKey() != 10) System.out.println("error delete - root");
+        else if(tree_our.getRoot().getLeft().getKey() != 5) System.out.println("error delete - left son");
+        else if(tree_our.getRoot().getRight().getKey() != 18) System.out.println("error delete - right son");
+        else if(y55 != -1) System.out.println("error delete - 50");
+        else if(y66 != 0) System.out.println("error delete - 9");
         else printdone("delete(int key))");
+        
         
         
      
@@ -123,14 +239,42 @@ public class Test_AVL_sapir extends AVLTree {
 	
 	
 	
-	
-	
+	public static void printTree_our(AVLNode currPtr, String indent, boolean last) {
+	    if (currPtr != null) {
+	      System.out.print(indent);
+	      if (last) {
+	        System.out.print("R----");
+	        indent += "   ";
+	      } else {
+	        System.out.print("L----");
+	        indent += "|  ";
+	      }
+	      System.out.println(currPtr.getKey());
+	      printTree_our(currPtr.getLeft(), indent, false);
+	      printTree_our(currPtr.getRight(), indent, true);
+	    }
+	  }
+	public static void printTree_web(Node currPtr, String indent, boolean last) {
+	    if (currPtr != null) {
+	      System.out.print(indent);
+	      if (last) {
+	        System.out.print("R----");
+	        indent += "   ";
+	      } else {
+	        System.out.print("L----");
+	        indent += "|  ";
+	      }
+	      System.out.println(currPtr.item);
+	      printTree_web(currPtr.left, indent, false);
+	      printTree_web(currPtr.right, indent, true);
+	    }
+	  }
 	
 	
 	public static void inorder(AVLNode r) {
         if (r.getValue() != null)        {
             inorder(r.getLeft());
-            System.out.println(r.getKey() +" left son = " + r.getLeft().getKey() + " rigth son = " + r.getRight().getKey());
+            System.out.println("node = " + r.getKey() +", value = " + r.getValue() +" left son = " + r.getLeft().getKey() + " rigth son = " + r.getRight().getKey());
             inorder(r.getRight());
         }
     }
