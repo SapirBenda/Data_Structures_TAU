@@ -137,13 +137,17 @@ public class AVLTree_our {
         while (x.isRealNode()) {
            balance = x.getbalanced();
            if (balance>1 || balance<-1) {
-               return rotate(balance, x);
+               counter += rotate(balance, x);
            }
-           x.updateHeight();
-           x = x.parent;
+           if (x.updateHeight()) {
+               counter+=1;
+               x = x.parent;
+           } else {
+               return counter;
+           }
         }
 
-        return 0;
+        return counter;
     }
     
     
@@ -153,7 +157,7 @@ public class AVLTree_our {
 //        	System.out.println("left then right ");
             node.getLeft().leftRotate();
             node.rightRotate();
-            return 2;
+            return 1;
         }
  
         // Right Left Case
@@ -161,7 +165,7 @@ public class AVLTree_our {
 //        	System.out.println("right then left");
             node.getRight().rightRotate();
             node.leftRotate();
-            return 2;
+            return 1;
         }
 
         //Left Left Case
@@ -267,7 +271,12 @@ public class AVLTree_our {
             if (balance>1 || balance<-1) {
                 counter += rotate(balance, balanceNode);
             }
-            balanceNode = balanceNode.getParent();
+            if (balanceNode.updateHeight()) {
+                balanceNode = balanceNode.getParent();
+                counter += 1;
+            } else {
+                return counter;
+            }
         }
 
         return counter;
@@ -397,7 +406,14 @@ public class AVLTree_our {
      */
     public boolean prefixXor(int k){
     	AVLNode knode = FindNodeByKey(k); // O(logn)
-    	return knode.sub_tree_xor;// O(1)
+    	boolean xor =  knode.getLeft().sub_tree_xor;// O(1)
+        knode = knode.getParent();
+
+        while (k>knode.getKey()) { // O(logn)
+            knode = knode.getParent();
+            if (!knode.isRealNode()) return xor;
+        }
+        return knode.sub_tree_xor ^ xor;
     }
 
     /**
@@ -565,11 +581,15 @@ public class AVLTree_our {
         }
 
         // updates the height and sub_tree_xor of the node
-        public void updateHeight() {
+        // returns true if the height has changed
+        // returns false otherwise
+        public boolean updateHeight() {
+            int height = this.getHeight();
             if (this.isRealNode()) {
                 this.sub_tree_xor = this.info ^ (this.getLeft().sub_tree_xor ^ this.getRight().sub_tree_xor);
                 this.setHeight(Math.max(this.getLeft().getHeight(), this.getRight().getHeight()) + 1);
             }
+            return height != this.getHeight();
         }
         
         private void rightRotate() {
