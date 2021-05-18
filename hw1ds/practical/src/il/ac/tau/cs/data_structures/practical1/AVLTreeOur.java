@@ -241,7 +241,7 @@ public class AVLTreeOur {
             } else {
                 //old children
                 balanceNode.setLeft(replacementNode.getRight());
-                //balanceNode.updateHeight();
+                balanceNode.updateHeight();
 
                 //new children
                 replacementNode.setLeft(x.getLeft());
@@ -276,11 +276,9 @@ public class AVLTreeOur {
                 counter += rotate(balance, balanceNode);
             }
             if (balanceNode.updateHeight()) {
-                balanceNode = balanceNode.getParent();
                 counter += 1;
-            } else {
-                return counter;
             }
+            balanceNode = balanceNode.getParent();
         }
 
         return counter;
