@@ -1,8 +1,6 @@
 package il.ac.tau.cs.data_structures.practical1;
 
 import java.util.Arrays;
-import java.util.Random;
-import java.util.function.IntPredicate;
 
 public class tester {
 
@@ -10,7 +8,7 @@ public class tester {
       
     	int[] keys = {5, 10, 8, 3, 7};
         boolean[] vals = {true, true, false, false, true};
-        AVLTree tree = new AVLTree();
+        AVLTreeOur tree = new AVLTreeOur();
         for (int i = 0; i < keys.length; i++) {
             tree.insert(keys[i], vals[i]);
         }

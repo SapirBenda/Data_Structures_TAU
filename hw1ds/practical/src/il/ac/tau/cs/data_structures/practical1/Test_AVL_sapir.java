@@ -1,15 +1,13 @@
 package il.ac.tau.cs.data_structures.practical1;
 
 import java.util.Arrays;
+//import il.ac.tau.cs.data_structures.practical1.AVLTree_web.Node;
 
-import il.ac.tau.cs.data_structures.practical1.AVLTree_our.AVLNode;
-import il.ac.tau.cs.data_structures.practical1.AVLTree_web.Node;
-
-public class Test_AVL_sapir extends AVLTree_our {
+public class Test_AVL_sapir extends AVLTreeOur {
 	
 	public static void main(String[] args) {
-		AVLTree_web tree_web = new AVLTree_web ();
-		AVLTree_our tree_our = new AVLTree_our();
+		//AVLTree_web tree_web = new AVLTree_web ();
+		AVLTreeOur tree_our = new AVLTreeOur();
         if(!tree_our.empty())
         	System.out.println("erorr empty()");
         
@@ -30,7 +28,7 @@ public class Test_AVL_sapir extends AVLTree_our {
         
         check_massege("empty()");
         Boolean e = tree_our.empty();
-        AVLTree_our tree2_our = new AVLTree_our();
+        AVLTreeOur tree2_our = new AVLTreeOur();
         Boolean e2 = tree2_our.empty();
         if(e) System.out.println("error empty- not empty");
         else if(!e2) System.out.println("error empty- empty");
@@ -117,7 +115,7 @@ public class Test_AVL_sapir extends AVLTree_our {
         if(!Arrays.equals(arr3, c3))System.out.println("error keysToArray 3");
         printdone("KeysToArrays()");
         
-        AVLTree_our tree3_our = new AVLTree_our();
+        AVLTreeOur tree3_our = new AVLTreeOur();
         int x20;
         for (int i = 0; i < keys.length; i++) {
            x20 =  tree3_our.insert(keys[i], vals[i]);  
@@ -138,7 +136,7 @@ public class Test_AVL_sapir extends AVLTree_our {
         else if (!Arrays.equals(tree2_our.infoToArray(), c4)) System.out.println("error infoToArray - empty tree");
         else printdone("InfoToArrays()");
         
-        AVLTree_our tree4_our = new AVLTree_our();
+        AVLTreeOur tree4_our = new AVLTreeOur();
         int x21;
         for (int i = 0; i < keys.length; i++) {
            x21 =  tree4_our.insert(keys[i], vals[i]);  
@@ -254,21 +252,21 @@ public class Test_AVL_sapir extends AVLTree_our {
 	      printTree_our(currPtr.getRight(), indent, true);
 	    }
 	  }
-	public static void printTree_web(Node currPtr, String indent, boolean last) {
-	    if (currPtr != null) {
-	      System.out.print(indent);
-	      if (last) {
-	        System.out.print("R----");
-	        indent += "   ";
-	      } else {
-	        System.out.print("L----");
-	        indent += "|  ";
-	      }
-	      System.out.println(currPtr.item);
-	      printTree_web(currPtr.left, indent, false);
-	      printTree_web(currPtr.right, indent, true);
-	    }
-	  }
+//	public static void printTree_web(Node currPtr, String indent, boolean last) {
+//	    if (currPtr != null) {
+//	      System.out.print(indent);
+//	      if (last) {
+//	        System.out.print("R----");
+//	        indent += "   ";
+//	      } else {
+//	        System.out.print("L----");
+//	        indent += "|  ";
+//	      }
+//	      System.out.println(currPtr.item);
+//	      printTree_web(currPtr.left, indent, false);
+//	      printTree_web(currPtr.right, indent, true);
+//	    }
+//	  }
 	
 	
 	public static void inorder(AVLNode r) {
