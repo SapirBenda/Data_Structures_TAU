@@ -202,11 +202,20 @@ public class AVLTreeOur {
 
         //update size
         this.size -= 1;
-        if(x.getKey() == this.minNode.getKey())
-        	this.minNode = x.getParent();
-        if(x.getKey() == this.maxNode.getKey()) 
-        	this.maxNode = x.getParent();   
-        	
+
+        // update min/max
+        if(x.getKey() == this.minNode.getKey()) {
+            this.minNode = x.getRight();
+            if (!minNode.isRealNode())
+                this.minNode = x.getParent();
+        }
+        if(x.getKey() == this.maxNode.getKey()){
+            this.maxNode = x.getLeft();
+            if (!maxNode.isRealNode())
+                this.maxNode = x.getParent();
+        }
+
+
         AVLNode balanceNode;
         int balance = 0;
         int counter = 0;
@@ -217,7 +226,7 @@ public class AVLTreeOur {
 
             //old children
             balanceNode = replacementNode.getParent();
-            if (balanceNode == x){
+            if (balanceNode == x) {
                 balanceNode = replacementNode;
 
                 //new children
@@ -225,15 +234,14 @@ public class AVLTreeOur {
 
                 //update parent
                 replacementNode.setParent(x.getParent());
-                if (x.getParent().getLeft()==x)
+                if (x.getParent().getLeft() == x)
                     x.getParent().setLeft(replacementNode);
                 else
                     x.getParent().setRight(replacementNode);
-
             } else {
                 //old children
                 balanceNode.setLeft(replacementNode.getRight());
-                balanceNode.updateHeight();
+                //balanceNode.updateHeight();
 
                 //new children
                 replacementNode.setLeft(x.getLeft());
@@ -258,7 +266,7 @@ public class AVLTreeOur {
                 balanceNode.setLeft(new AVLNode());
             else
                 balanceNode.setRight(new AVLNode());
-            balanceNode.updateHeight();
+            //balanceNode.updateHeight();
         }
 
         // balance tree
@@ -289,6 +297,10 @@ public class AVLTreeOur {
         return(empty()) ? null : this.minNode.getValue();
     }
 
+    public AVLNode getMinNode() {
+        return this.minNode;
+    }
+
     /**
      * public Boolean max()
      * <p>
@@ -298,6 +310,10 @@ public class AVLTreeOur {
      */
     public Boolean max() {
         return(empty()) ? null: this.maxNode.getValue();
+    }
+
+    public AVLNode getMaxNode(){
+        return this.maxNode;
     }
 
     /**
@@ -564,7 +580,10 @@ public class AVLTreeOur {
             return this.height;
         }
         
-        
+        public boolean getSubTreeXor() {
+            return this.subTreeXor;
+        }
+
         public int getBalance() {
         	if(this.isRealNode())
                 return this.getLeft().getHeight() - this.getRight().getHeight();
@@ -621,7 +640,16 @@ public class AVLTreeOur {
             replacementNode.updateHeight();
             nodeParent.updateHeight();
         }
-        
+
+        @Override
+        public String toString() {
+            return "(" +
+                    "key=" + key +
+                    ", value=" + info +
+                    ", height=" + height +
+                    ", xor=" + subTreeXor +
+                    ')';
+        }
     }
 
     public class AVlRoot extends AVLNode{
@@ -657,6 +685,8 @@ public class AVLTreeOur {
         public int getHeight () {
             return -1;
         }
+
+
     }
 
 }
