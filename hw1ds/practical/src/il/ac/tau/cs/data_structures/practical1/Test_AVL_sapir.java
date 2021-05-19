@@ -231,7 +231,7 @@ public class Test_AVL_sapir extends AVLTreeOur {
 
         int y66 = tree_our.delete(9);
 
-        printTree_our(tree_our);
+        // // printTree_our(tree_our);
 //        printTree_our(tree2_our);
 //        printTree_our(tree3_our);
 //        printTree_our(tree4_our);
