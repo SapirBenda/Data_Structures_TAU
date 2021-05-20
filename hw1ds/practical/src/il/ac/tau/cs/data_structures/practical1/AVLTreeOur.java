@@ -221,34 +221,28 @@ public class AVLTreeOur {
         int balance = 0;
         int counter = 0;
 
-        if (x.getRight().isRealNode() || x.getRight().isRealNode()) {
+        if (x.getLeft().isRealNode() || x.getRight().isRealNode()) {
             //replace node if not leaf
             AVLNode replacementNode = this.successor(x);
 
-            //old children
-            balanceNode = replacementNode.getParent();
-            if (balanceNode == x) {
-                balanceNode = replacementNode;
-
-                //new children
+            if (!replacementNode.isRealNode()) {
+                balanceNode=x.getParent();
+                replacementNode = x.getLeft();
+            }
+            // check if the balance node is the deleted node
+            else if (replacementNode.getParent() == x) {
+                balanceNode = x.getParent();
                 replacementNode.setLeft(x.getLeft());
-
-                //update parent
-                replacementNode.setParent(x.getParent());
-                if (x.getParent().getLeft() == x)
-                    x.getParent().setLeft(replacementNode);
-                else
-                    x.getParent().setRight(replacementNode);
             } else {
                 //old children
+                balanceNode = replacementNode.getParent();
                 balanceNode.setLeft(replacementNode.getRight());
-                //balanceNode.updateHeight();
 
                 //new children
                 replacementNode.setLeft(x.getLeft());
                 replacementNode.setRight(x.getRight());
-
             }
+
             //update parent
             replacementNode.setParent(x.getParent());
             if (x.getParent().getLeft()==x)
@@ -258,7 +252,6 @@ public class AVLTreeOur {
 
             //update heights
             replacementNode.updateHeight();
-            replacementNode.getParent().updateHeight();
 
         } else {
             //delete node
@@ -267,7 +260,6 @@ public class AVLTreeOur {
                 balanceNode.setLeft(new AVLNode());
             else
                 balanceNode.setRight(new AVLNode());
-            //balanceNode.updateHeight();
         }
 
         // balance tree

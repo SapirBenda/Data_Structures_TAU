@@ -270,8 +270,8 @@ public class Test_AVL extends AVLTreeOur {
         if (y33 != -1) System.out.println("error delete - tree2 empty");
         
         if (y44 != 0) System.out.println("error delete - 13 - change the higth of 10");
-        if (y55 != 1) System.out.println("error delete - 50 - chenge the higth of 18");
-        if (y66 != 1) System.out.println("error delete - 9 - one rotation");
+        if (y55 != 0) System.out.println("error delete - 50 - chenge the higth of 18");
+        if (y66 != 2) System.out.println("error delete - 9 - one rotation");
         if (tree_our.getRoot().getKey() != 10) System.out.println("error delete - root");
         if (tree_our.getRoot().getLeft().getKey() != 3) System.out.println("error delete - left son");
         if (tree_our.getRoot().getRight().getKey() != 18) System.out.println("error delete - right son");
