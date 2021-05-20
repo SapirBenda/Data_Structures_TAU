@@ -1,21 +1,21 @@
 package il.ac.tau.cs.data_structures.practical1;
 
-public class AVLTree_web {
+public class AVLTree_web extends Test_AVL_sapir {
 	// AVL tree implementation in Java
-	Node root;
+	webNode root;
 	
 	// Create node
-	class Node {
+	public class webNode {
 	  int item, height;
-	  Node left, right;
+	  webNode left, right;
 
-	  public Node(int d) {
+	  public webNode(int d) {
 	    item = d;
 	    height = 1;
 	  }
 	}
 
-	public int height(Node N) {
+	public int height(webNode N) {
 	    if (N == null)
 	      return 0;
 	    return N.height;
@@ -25,9 +25,9 @@ public class AVLTree_web {
 	    return (a > b) ? a : b;
 	  }
 
-	public Node rightRotate(Node y) {
-	    Node x = y.left;
-	    Node T2 = x.right;
+	public webNode rightRotate(webNode y) {
+	    webNode x = y.left;
+	    webNode T2 = x.right;
 	    x.right = y;
 	    y.left = T2;
 	    y.height = max(height(y.left), height(y.right)) + 1;
@@ -35,9 +35,9 @@ public class AVLTree_web {
 	    return x;
 	  }
 
-	public Node leftRotate(Node x) {
-	    Node y = x.right;
-	    Node T2 = y.left;
+	public webNode leftRotate(webNode x) {
+	    webNode y = x.right;
+	    webNode T2 = y.left;
 	    y.left = x;
 	    x.right = T2;
 	    x.height = max(height(x.left), height(x.right)) + 1;
@@ -46,18 +46,18 @@ public class AVLTree_web {
 	  }
 
 	  // Get balance factor of a node
-	public int getBalanceFactor(Node N) {
+	public int getBalanceFactor(webNode N) {
 	    if (N == null)
 	      return 0;
 	    return height(N.left) - height(N.right);
 	  }
 
 	  // Insert a node
-	public Node insertNode(Node node, int item) {
+	public webNode insertNode(webNode node, int item) {
 
 	    // Find the position and insert the node
 	    if (node == null)
-	      return (new Node(item));
+	      return (new webNode(item));
 	    if (item < node.item)
 	      node.left = insertNode(node.left, item);
 	    else if (item > node.item)
@@ -88,15 +88,15 @@ public class AVLTree_web {
 	    return node;
 	  }
 
-	public Node nodeWithMimumValue(Node node) {
-	    Node current = node;
+	public webNode nodeWithMimumValue(webNode node) {
+	    webNode current = node;
 	    while (current.left != null)
 	      current = current.left;
 	    return current;
 	  }
 
 	  // Delete a node
-	public Node deleteNode(Node root, int item) {
+	public webNode deleteNode(webNode root, int item) {
 
 	    // Find the node to be deleted and remove it
 	    if (root == null)
@@ -107,7 +107,7 @@ public class AVLTree_web {
 	      root.right = deleteNode(root.right, item);
 	    else {
 	      if ((root.left == null) || (root.right == null)) {
-	        Node temp = null;
+	        webNode temp = null;
 	        if (temp == root.left)
 	          temp = root.right;
 	        else
@@ -118,7 +118,7 @@ public class AVLTree_web {
 	        } else
 	          root = temp;
 	      } else {
-	        Node temp = nodeWithMimumValue(root.right);
+	        webNode temp = nodeWithMimumValue(root.right);
 	        root.item = temp.item;
 	        root.right = deleteNode(root.right, temp.item);
 	      }
@@ -148,7 +148,7 @@ public class AVLTree_web {
 	    return root;
 	  }
 
-	public void preOrder(Node node) {
+	public void preOrder(webNode node) {
 	    if (node != null) {
 	      System.out.print(node.item + " ");
 	      preOrder(node.left);
@@ -157,7 +157,7 @@ public class AVLTree_web {
 	  }
 
 	  // Print the tree
-	public void printTree(Node currPtr, String indent, boolean last) {
+	public void printTree(webNode currPtr, String indent, boolean last) {
 	    if (currPtr != null) {
 	      System.out.print(indent);
 	      if (last) {
