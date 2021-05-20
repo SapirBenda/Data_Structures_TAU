@@ -2,7 +2,7 @@ package il.ac.tau.cs.data_structures.practical1;
 
 import java.util.Arrays;
 
-public class Test_AVL_sapir extends AVLTreeOur {
+public class Test_AVL extends AVLTreeOur {
 
     public static void main(String[] args) {
         AVLTreeOur tree_our = new AVLTreeOur();
