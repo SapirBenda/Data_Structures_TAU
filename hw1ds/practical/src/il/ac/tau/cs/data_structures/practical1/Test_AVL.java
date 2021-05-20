@@ -250,21 +250,26 @@ public class Test_AVL extends AVLTreeOur {
 		check_massege("delete(int key)");
 		printTree_our(tree_our);
         int y11 = tree_our.delete(6);
+        printTree_our(tree_our);
         int y22 = tree_our.delete(8);
+        printTree_our(tree_our);
         int y33 = tree2_our.delete(8);
+
         int higth10 =  tree_our.FindNodeByKey(10).getHeight();
-        System.out.println("10 higth before delete 13 = " + higth10);
         int y44 = tree_our.delete(13);
+        printTree_our(tree_our);
+
         higth10 =  tree_our.FindNodeByKey(10).getHeight();
-        System.out.println("10 higth after delete 13 = " + higth10);
         int y55 = tree_our.delete(50);
+        printTree_our(tree_our);
+
         int y66 = tree_our.delete(9);
         System.out.println("y11 = " + y11 + ", y22 = " + y22 + ", y33 = " + y33 + ", y44 = " + y44 + ", y55 = " + y55 + ", y66 = " + y66);
         if (y11 != -1) System.out.println("error delete - 6 not in tree");
-        if (y22 != 1) System.out.println("error delete - 8");
+        if (y22 != 2) System.out.println("error delete - 8");
         if (y33 != -1) System.out.println("error delete - tree2 empty");
         
-        if (y44 != 1) System.out.println("error delete - 13 - change the higth of 10");
+        if (y44 != 0) System.out.println("error delete - 13 - change the higth of 10");
         if (y55 != 1) System.out.println("error delete - 50 - chenge the higth of 18");
         if (y66 != 1) System.out.println("error delete - 9 - one rotation");
         if (tree_our.getRoot().getKey() != 10) System.out.println("error delete - root");
