@@ -60,6 +60,7 @@ public class AVLTreeOur {
     		else
     			x = x.getRight();
     	}
+
     	return null; // k is not a key in the tree
     }
 
@@ -241,7 +242,7 @@ public class AVLTreeOur {
             } else {
                 //old children
                 balanceNode.setLeft(replacementNode.getRight());
-                balanceNode.updateHeight();
+                //balanceNode.updateHeight();
 
                 //new children
                 replacementNode.setLeft(x.getLeft());
@@ -415,14 +416,18 @@ public class AVLTreeOur {
      */
     public boolean prefixXor(int k){
     	AVLNode knode = FindNodeByKey(k); // O(logn)
-    	boolean xor =  knode.getLeft().subTreeXor;// O(1)
-        knode = knode.getParent();
+    	boolean xor =  false;
 
-        while (k>knode.getKey()) { // O(logn)
+        while (knode.isRealNode()) { // O(logn)
+            if (knode.getKey()<=k){
+                xor =  knode.info  ^ xor;
+                if (knode.getLeft().isRealNode())
+                    xor = xor ^ knode.getLeft().subTreeXor; // O(1)
+            }
             knode = knode.getParent();
-            if (!knode.isRealNode()) return xor;
         }
-        return knode.subTreeXor ^ xor;
+
+        return xor;
     }
 
     /**
