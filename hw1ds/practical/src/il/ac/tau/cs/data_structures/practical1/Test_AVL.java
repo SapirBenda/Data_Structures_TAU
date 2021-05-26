@@ -2,11 +2,11 @@ package il.ac.tau.cs.data_structures.practical1;
 
 import java.util.Arrays;
 
-public class Test_AVL extends AVLTreeOur {
+public class Test_AVL extends AVLTree {
 
     public static void main(String[] args) {
-        AVLTreeOur tree_our = new AVLTreeOur();
-        AVLTreeOur tree2_our = new AVLTreeOur();
+        AVLTree tree_our = new AVLTree();
+        AVLTree tree2_our = new AVLTree();
         if (!tree_our.empty())
             System.out.println("erorr empty()");
 
@@ -18,13 +18,13 @@ public class Test_AVL extends AVLTreeOur {
             x = tree_our.insert(keys[i], vals[i]);
         }
 
-        AVLTreeOur tree3_our = new AVLTreeOur();
+        AVLTree tree3_our = new AVLTree();
         int x20;
         for (int i = 0; i < keys.length; i++) {
             x20 = tree3_our.insert(keys[i], vals[i]);
         }
 
-        AVLTreeOur tree4_our = new AVLTreeOur();
+        AVLTree tree4_our = new AVLTree();
         int x21;
         for (int i = 0; i < keys.length; i++) {
             x21 = tree4_our.insert(keys[i], vals[i]);
@@ -40,21 +40,21 @@ public class Test_AVL extends AVLTreeOur {
         tree_our = check_max(tree_our, tree2_our);
         tree_our = check_keysToArray(tree_our, tree2_our);
         check_infoToArray(tree_our, tree2_our, tree3_our);
-        AVLTreeOur tree5_our = tree_our;
+        AVLTree tree5_our = tree_our;
         check_getRoot(tree_our, tree2_our, tree3_our);
         check_successor(tree_our);
         check_prefixXor(tree_our);
         check_succPrefixXor(tree_our);
-        AVLTreeOur tree6_our = check_size(tree_our, tree2_our,tree3_our, tree4_our); 
+        AVLTree tree6_our = check_size(tree_our, tree2_our,tree3_our, tree4_our);
         tree5_our = check_delete(tree5_our, tree2_our);
         System.out.println();
         System.out.println("~~~~~~~~~~~~~~~~~~~~ end manual check ~~~~~~~~~~~~~~~~~~~~");
     }
     
-    public static void check_empty(AVLTreeOur tree_our) {
+    public static void check_empty(AVLTree tree_our) {
     	check_massege("empty()");
         Boolean e = tree_our.empty();
-        AVLTreeOur tree2_our = new AVLTreeOur();
+        AVLTree tree2_our = new AVLTree();
         Boolean e2 = tree2_our.empty();
         if (e) System.out.println("error empty- not empty");
         else if (!e2) System.out.println("error empty- empty");
@@ -62,7 +62,7 @@ public class Test_AVL extends AVLTreeOur {
     	
     }
     
-	public static void check_search(AVLTreeOur tree_our) {
+	public static void check_search(AVLTree tree_our) {
 		check_massege("search(int key)");
         Boolean s1 = tree_our.search(5);
         Boolean s2 = tree_our.search(10);
@@ -80,7 +80,7 @@ public class Test_AVL extends AVLTreeOur {
 	    	
 	    }
 	
-	public static AVLTreeOur check_insert(AVLTreeOur tree_our) {
+	public static AVLTree check_insert(AVLTree tree_our) {
 		check_massege("inset(int key, boolean value)");
         int x1 = tree_our.insert(4, false);
         int x2 = tree_our.insert(25, true);
@@ -113,7 +113,7 @@ public class Test_AVL extends AVLTreeOur {
 	}
 
 	
-	public static AVLTreeOur check_min(AVLTreeOur tree_our, AVLTreeOur tree2_our) {
+	public static AVLTree check_min(AVLTree tree_our, AVLTree tree2_our) {
 		check_massege("min");
         Boolean m = tree_our.min();
         if (m) System.out.println("error min - 0");
@@ -126,7 +126,7 @@ public class Test_AVL extends AVLTreeOur {
         return tree_our;
 	}
 	
-	public static AVLTreeOur check_max(AVLTreeOur tree_our, AVLTreeOur tree2_our) {
+	public static AVLTree check_max(AVLTree tree_our, AVLTree tree2_our) {
 		check_massege("max");
         Boolean l = tree_our.max();
         if (l) System.out.println("error max - 40");
@@ -140,7 +140,7 @@ public class Test_AVL extends AVLTreeOur {
         return tree_our;
 	}
 	
-	public static AVLTreeOur check_keysToArray(AVLTreeOur tree_our, AVLTreeOur tree2_our) {
+	public static AVLTree check_keysToArray(AVLTree tree_our, AVLTree tree2_our) {
 		check_massege("KeysToArrays()");
         int[] arr = tree_our.keysToArray();
         int[] c = {3, 4, 5, 7, 8, 9, 10, 13, 15, 18, 25};
@@ -159,7 +159,7 @@ public class Test_AVL extends AVLTreeOur {
         return tree_our;
 	}
 	
-	public static void check_infoToArray(AVLTreeOur tree_our, AVLTreeOur tree2_our, AVLTreeOur tree3_our) {
+	public static void check_infoToArray(AVLTree tree_our, AVLTree tree2_our, AVLTree tree3_our) {
 		check_massege("infoToArrays()");
         boolean[] arr4 = tree3_our.infoToArray();
         boolean[] arr7 = {true, true, false, true, false};
@@ -172,7 +172,7 @@ public class Test_AVL extends AVLTreeOur {
         else printdone("InfoToArrays()");
 	}
 	
-	public static AVLTreeOur check_size(AVLTreeOur tree_our, AVLTreeOur tree2_our, AVLTreeOur tree3_our, AVLTreeOur tree4_our) {
+	public static AVLTree check_size(AVLTree tree_our, AVLTree tree2_our, AVLTree tree3_our, AVLTree tree4_our) {
 		check_massege("Size()");
         if (tree_our.size() != 11) System.out.println("erroe size - 1");
         else if (tree3_our.size() != 5) System.out.println("erroe size - 2");
@@ -193,7 +193,7 @@ public class Test_AVL extends AVLTreeOur {
         return tree_our;
 	}
 	
-	public static void check_getRoot(AVLTreeOur tree_our, AVLTreeOur tree2_our, AVLTreeOur tree3_our) {
+	public static void check_getRoot(AVLTree tree_our, AVLTree tree2_our, AVLTree tree3_our) {
 		check_massege("GetRoot()");
         AVLNode a3 = tree3_our.getRoot();
         AVLNode a = tree_our.getRoot();
@@ -204,7 +204,7 @@ public class Test_AVL extends AVLTreeOur {
         else printdone("GetRoot()");
 	}
 	
-	public static void check_successor(AVLTreeOur tree_our) {
+	public static void check_successor(AVLTree tree_our) {
 		check_massege("Successor(AVLNode node)");
         AVLNode e1 = tree_our.FindNodeByKey(3);
         AVLNode e11 = tree_our.successor(e1);
@@ -224,11 +224,11 @@ public class Test_AVL extends AVLTreeOur {
         else printdone("Successor(AVLNode node)");
 	}
 	
-	public static void check_prefixXor(AVLTreeOur tree_our) {
+	public static void check_prefixXor(AVLTree tree_our) {
 		
 	}
 	
-	public static void check_succPrefixXor(AVLTreeOur tree_our) {
+	public static void check_succPrefixXor(AVLTree tree_our) {
 		check_massege("succPrefixXor(int k)");
         boolean y1 = tree_our.succPrefixXor(3); // true
         boolean y2 = tree_our.succPrefixXor(5); // false
@@ -246,7 +246,7 @@ public class Test_AVL extends AVLTreeOur {
 
 	}
 	
-	public static AVLTreeOur check_delete(AVLTreeOur tree_our, AVLTreeOur tree2_our) {
+	public static AVLTree check_delete(AVLTree tree_our, AVLTree tree2_our) {
 		check_massege("delete(int key)");
 		printTree_our(tree_our);
         int y11 = tree_our.delete(6);
@@ -280,7 +280,7 @@ public class Test_AVL extends AVLTreeOur {
 	}
 	
 	
-    public static void printTree_our(AVLTreeOur treeOur) {
+    public static void printTree_our(AVLTree treeOur) {
         System.out.println("===[SIZE:"+treeOur.size()+"]===");
         printTree_our(treeOur.getRoot(), "", false);
         System.out.println("===[MIN:"+treeOur.getMinNode()+"]===");
