@@ -13,7 +13,7 @@ package il.ac.tau.cs.data_structures.practical1;
  * according to your needs.
  */
 
-public class AVLTreeOur {
+public class AVLTree {
 
 	private final AVlRoot root;
 	private int size;
@@ -25,7 +25,7 @@ public class AVLTreeOur {
      * This constructor creates an empty AVLTree.
      * O(1)
      */  
-    public AVLTreeOur(){
+    public AVLTree(){
     	this.root = new AVlRoot();
     	this.size =0;
     	this.minNode = this.getRoot();

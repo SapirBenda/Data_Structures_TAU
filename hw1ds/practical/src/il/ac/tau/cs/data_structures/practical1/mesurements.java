@@ -1,7 +1,5 @@
 package il.ac.tau.cs.data_structures.practical1;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -16,8 +14,8 @@ public class mesurements {
     }
 
     public void first() {
-        for (int i=1; i<=5; i++) {
-            AVLTreeOur treeOur = new AVLTreeOur();
+        for (int i=5; i>0; i--) {
+            AVLTree treeOur = new AVLTree();
             double timeElapsed = 0;
             double succTimeElapsed = 0;
             double start;
@@ -72,7 +70,7 @@ public class mesurements {
 
     public  void second() {
         for (int i=1; i<=5; i++) {
-            AVLTreeOur treeOur;
+            AVLTree treeOur;
             unbalancedAVL unbalancedTree;
 
             double timeElapsed = 0;
@@ -100,7 +98,7 @@ public class mesurements {
 
 
             // balanced heshbon
-            treeOur = new AVLTreeOur();
+            treeOur = new AVLTree();
             start = System.nanoTime();
             for (int k = 1; j < 1000*i; j++) {
                 treeOur.insert(heshbon[k],true);
@@ -122,7 +120,7 @@ public class mesurements {
 
 
             // balanced balanced
-            treeOur = new AVLTreeOur();
+            treeOur = new AVLTree();
             start = System.nanoTime();
             for (int k = 1; j < 1000*i; j++) {
                 treeOur.insert(balanced[k],true);
@@ -144,7 +142,7 @@ public class mesurements {
 
 
             // balanced rndm
-            treeOur = new AVLTreeOur();
+            treeOur = new AVLTree();
             start = System.nanoTime();
             for (int k = 1; j < 1000*i; j++) {
                 treeOur.insert(rndm[k],true);
