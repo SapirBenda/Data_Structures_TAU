@@ -45,6 +45,8 @@ public class Graph {
     	int indexForNodeInHashTable;
     	for (Node node:nodes) {
     		indexForNodeInHashTable = hashFunc(node.getId());
+    		if (this.hashTable[indexForNodeInHashTable]==null)
+				this.hashTable[indexForNodeInHashTable]=new LinkedList<Node>();
     		this.hashTable[indexForNodeInHashTable].add(node);
     		insertToMaximumHeap(indexForNodeInHashTable);
     	}
@@ -227,16 +229,21 @@ public class Graph {
     }
     
 
-    public void main(String[] args) {
-
+    public void test() {
     	Node [] nodes = new Node[5];
-    	for (int i =0; i< nodes.length; i ++) {
+		for (int i =0; i< nodes.length; i ++) {
     		nodes[i] = new Node(i, 10*i);
     	}
     	
     	Graph graph = new Graph(nodes);
     	System.out.println(graph);
     }
+
+    public static void main(String[] args) { // אני בטוח שיש דרך יותר טובה לעשות את זה
+		Node [] nodes = new Node[0];
+		Graph graph = new Graph(nodes);
+		graph.test();
+	}
 }
 
 class EdgeList {
