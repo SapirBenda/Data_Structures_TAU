@@ -20,7 +20,7 @@ public class Graph {
      */
 	private int numNodes;
 	private int numEdges;
-	private int [] MaximumHeap;
+	private Node [] MaximumHeap;
 	final int prime = (int) Math.pow(10, 9) + 9;
 	final int a;
 	final int b;
@@ -31,7 +31,8 @@ public class Graph {
     public Graph(Node [] nodes){
     	//init sizes
     	this.numEdges=0;
-		this.numNodes=this.N=nodes.length;
+		this.numNodes=0;
+		this.N=nodes.length;
 
 		//init numbers for the hash function
 		this.a = new Random().ints(1,prime).findFirst().getAsInt();
@@ -48,7 +49,8 @@ public class Graph {
     		if (this.hashTable[indexForNodeInHashTable]==null)
 				this.hashTable[indexForNodeInHashTable]=new LinkedList<Node>();
     		this.hashTable[indexForNodeInHashTable].add(node);
-    		insertToMaximumHeap(indexForNodeInHashTable);
+    		insertToMaximumHeap(getNode(node.id));
+    		this.numNodes++;
     	}
     }
 
@@ -112,8 +114,9 @@ public class Graph {
 
     	// both nodes in the graph
 		EdgeList.addEdge(node1,node2);
-    	
-    	// need to correct naximum heap!!!!!!!
+		//correct MaximumHeap
+		HeapifyUp(node1.getindexinMaximumHeap());
+		HeapifyUp(node2.getindexinMaximumHeap());
     	
     	this.numEdges ++;
         return false;
@@ -143,10 +146,9 @@ public class Graph {
     public int getNumEdges() { return this.numEdges; }
 
     
-    public void insertToMaximumHeap(int indexOfNodeInHashTable) { // O(logn)
-    	this.MaximumHeap[this.numNodes] = indexOfNodeInHashTable;
+    public void insertToMaximumHeap(Node newNode) { // O(logn)
+    	this.MaximumHeap[this.numNodes] = newNode;
     	HeapifyUp(this.numNodes);
-    	this.numNodes ++;
     }
     
     public int Parent(int index) { return (int)Math.floor(index/2); }
@@ -154,16 +156,17 @@ public class Graph {
     public int RightSon(int index) {return index*2 +1;}
     
     public void switchvaluesByindexes(int index1, int index2) {
-    	int temp = this.MaximumHeap[index1];
+    	Node temp = this.MaximumHeap[index1];
     	this.MaximumHeap[index1] = this.MaximumHeap[index2];
+    	this.MaximumHeap[index1].setindexinMaximumHeap(this.MaximumHeap[index2].getindexinMaximumHeap());
     	this.MaximumHeap[index2] = temp;
+    	this.MaximumHeap[index2].setindexinMaximumHeap(temp.getindexinMaximumHeap());
     }
     
     public void HeapifyUp(int indexOfNodeInMaximumHeap) { // O(logn)
     	int temp, parent = Parent(indexOfNodeInMaximumHeap);
-    	while(indexOfNodeInMaximumHeap > 1 &&
-    			this.getNode(this.MaximumHeap[indexOfNodeInMaximumHeap]).getNeighborhoodWeight()
-						> this.getNode(this.MaximumHeap[parent]).getNeighborhoodWeight()) {
+    	while(indexOfNodeInMaximumHeap > 1 && this.MaximumHeap[indexOfNodeInMaximumHeap].getNeighborhoodWeight() 
+						< this.MaximumHeap[parent].getNeighborhoodWeight()) {
     		switchvaluesByindexes(indexOfNodeInMaximumHeap,parent);
     		indexOfNodeInMaximumHeap = parent;
     		parent = Parent(indexOfNodeInMaximumHeap);
@@ -174,12 +177,12 @@ public class Graph {
     	int left = LeftSon(indexOfNodeInMaximumHeap);
     	int right = RightSon(indexOfNodeInMaximumHeap);
     	int bigger = indexOfNodeInMaximumHeap;
-    	if(left < this.numNodes && this.getNode(this.MaximumHeap[left]).getNeighborhoodWeight()
-				> this.getNode(this.MaximumHeap[bigger]).getNeighborhoodWeight() ) {
+    	if(left < this.numNodes && this.MaximumHeap[left].getNeighborhoodWeight()
+				> this.MaximumHeap[bigger].getNeighborhoodWeight() ) {
     		bigger = left;
     	}
-    	if (right < this.numNodes && this.getNode(this.MaximumHeap[right]).getNeighborhoodWeight()
-				> this.getNode(this.MaximumHeap[bigger]).getNeighborhoodWeight()) {
+    	if (right < this.numNodes && this.MaximumHeap[right].getNeighborhoodWeight()
+				> this.MaximumHeap[bigger].getNeighborhoodWeight()) {
     		bigger = right;
     	}
     	if (bigger > indexOfNodeInMaximumHeap) {
@@ -192,7 +195,7 @@ public class Graph {
     /**
      * This class represents a node in the graph.
      */
-    public class Node{
+    public static class Node{
         /**
          * Creates a new node object, given its id and its weight.
          * @param id - the id of the node.
@@ -202,10 +205,13 @@ public class Graph {
     	private int weight;
     	private int neighborhoodWeight;
     	private EdgeList neighbors;
+    	private int indexinMaximumHeap;
     	
         public Node(int id, int weight){
             this.id = id;
             this.weight = weight;
+            this.neighborhoodWeight = this.weight;
+            this.neighbors = new EdgeList();
         }
 
         /**
@@ -226,6 +232,8 @@ public class Graph {
 
 		public EdgeList getNeighbors() { return this.neighbors; }
 
+		public int getindexinMaximumHeap() { return this.indexinMaximumHeap;}
+		public void setindexinMaximumHeap(int newindex) { this.indexinMaximumHeap = newindex;}
     }
     
 
