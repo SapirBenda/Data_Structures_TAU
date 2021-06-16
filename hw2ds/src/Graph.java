@@ -1,18 +1,7 @@
-/*
-You must NOT change the signatures of classes/methods in this skeleton file.
-You are required to implement the methods of this skeleton file according to the requirements.
-You are allowed to add classes, methods, and members as required.
- */
-
 import java.util.*;
 
-/**
- * This class represents a graph that efficiently maintains the heaviest neighborhood over edge addition and
- * vertex deletion.
- *
- */
 public class Graph {
-    /**
+	/**
      * Initializes the graph on a given set of nodes. The created graph is empty, i.e. it has no edges.
      * You may assume that the ids of distinct nodes are distinct.
      *
@@ -33,22 +22,52 @@ public class Graph {
     	this.numEdges=0;
 		this.numNodes=0;
 		this.N=nodes.length;
-
+		
 		//init data structures
 		this.MaximumHeap = new Node[N + 1];
     	this.hashTable = new DoubleLinkedList[N+1];
-
+    	
     	//add nodes
     	int indexForNodeInHashTable;
     	for (Node node:nodes) {
     		indexForNodeInHashTable = hashFunc(node.getId());
-    		if (this.hashTable[indexForNodeInHashTable]==null)
+    		if (this.hashTable[indexForNodeInHashTable]==null) 
 				this.hashTable[indexForNodeInHashTable]= new DoubleLinkedList< Node >();
     		this.hashTable[indexForNodeInHashTable].addNode(node);
-    		insertToMaximumHeap(getNode(node.id));
     		this.numNodes++;
+    		insertToMaximumHeap(node);
     	}
+    	System.out.println("HashTable: ");
+		PrintHashTable();
+		System.out.print("Heap: ");
+		PrintHeap();
+    	System.out.println("----- finish init graph -----");
+    	System.out.println();
     }
+    
+    public void test() {
+    	Node [] nodes = new Node[5];
+		for (int i =0; i< nodes.length; i ++) {
+    		nodes[i] = new Node(i, 10*i);
+    	}
+				
+    	Graph graph = new Graph(nodes);
+//    	for(Node node: nodes) {
+//			node.PrintNode();
+//			System.out.println();
+//		}
+//    	graph.PrintAllEdgeByNode();
+    	graph.addEdge(1, 2);
+    	
+
+    }
+
+    public static void main(String[] args) {
+		System.out.println("begin test");
+    	Node [] nodes = new Node[0];
+		Graph graph = new Graph(nodes);
+		graph.test();
+	}
 
 
 	private int hashFunc(int k) {
@@ -74,12 +93,6 @@ public class Graph {
         return this.MaximumHeap[1];
     }
     
-    
-    @Override 
-    public String toString() {
-    	return "HashTable = " + this.hashTable + "\t" +
-    					"MaximunHeap = " + this.MaximumHeap;
-    }
 
     /**
      * given a node id of a node in the graph, this method returns the neighborhood weight of that node.
@@ -116,7 +129,7 @@ public class Graph {
 		HeapifyUp(node2.getindexinMaximumHeap());
     	
     	this.numEdges ++;
-        return false;
+        return true;
     }
 
     /**
@@ -145,6 +158,7 @@ public class Graph {
     
     public void insertToMaximumHeap(Node newNode) { // O(logn)
     	this.MaximumHeap[this.numNodes] = newNode;
+    	newNode.setindexinMaximumHeap(this.numNodes);
     	HeapifyUp(this.numNodes);
     }
     
@@ -153,17 +167,18 @@ public class Graph {
     public int RightSon(int index) {return index*2 +1;}
     
     public void switchvaluesByindexes(int index1, int index2) {
+    	this.MaximumHeap[index1].setindexinMaximumHeap(index2);
+    	this.MaximumHeap[index2].setindexinMaximumHeap(index1);
     	Node temp = this.MaximumHeap[index1];
     	this.MaximumHeap[index1] = this.MaximumHeap[index2];
-    	this.MaximumHeap[index1].setindexinMaximumHeap(this.MaximumHeap[index2].getindexinMaximumHeap());
     	this.MaximumHeap[index2] = temp;
-    	this.MaximumHeap[index2].setindexinMaximumHeap(temp.getindexinMaximumHeap());
+
     }
     
     public void HeapifyUp(int indexOfNodeInMaximumHeap) { // O(logn)
-    	int temp, parent = Parent(indexOfNodeInMaximumHeap);
+    	int parent = Parent(indexOfNodeInMaximumHeap);
     	while(indexOfNodeInMaximumHeap > 1 && this.MaximumHeap[indexOfNodeInMaximumHeap].getNeighborhoodWeight() 
-						< this.MaximumHeap[parent].getNeighborhoodWeight()) {
+						> this.MaximumHeap[parent].getNeighborhoodWeight()) {
     		switchvaluesByindexes(indexOfNodeInMaximumHeap,parent);
     		indexOfNodeInMaximumHeap = parent;
     		parent = Parent(indexOfNodeInMaximumHeap);
@@ -187,6 +202,68 @@ public class Graph {
     		HeapifyDown(bigger);
     	}
     }
+    
+    public void PrintHeap() {
+//    	System.out.println("The Heap = ");
+    	System.out.print("[");
+    	for(int index =0; index< this.MaximumHeap.length; index++) {
+    		if (this.MaximumHeap[index] == null)
+    			System.out.print("-1, ");
+    		else {
+    			Node node = this.MaximumHeap[index];
+    			System.out.print("("+ node.getId() + ", " + node.getNeighborhoodWeight()+ "),");
+    		}
+    	}
+ 
+    	System.out.println("]");
+    }
+    
+    public void PrintHashTable() {
+    	for(int index=0; index< this.hashTable.length;index++) {
+    		System.out.print("[ " + index + " ---> ");
+    		if (this.hashTable[index] == null)
+    			System.out.print("#");
+    		else {
+    			DoubleLinkedList.LinkedNode<Graph.Node> x = this.hashTable[index].getHead();
+    			while(x != null) {
+    				System.out.print("("+ x.getNode().getId() + ", " + x.getNode().getNeighborhoodWeight() + "),");
+    				x = x.getNext();
+    			}
+    		}
+    		System.out.println(" ]");
+    	}
+    }
+    
+    public void PrintEgdeListForNode(DoubleLinkedList.LinkedNode<Graph.Node> x2) {
+    	DoubleLinkedList<Graph.Node> y = x2.getNeighbors();
+    	System.out.print("{");
+    	if (y != null) {
+    		DoubleLinkedList.LinkedNode<Graph.Node> x = y.getHead();
+	    	while(x != null) {
+	    		System.out.print(x.getNode().getId()+ ",");
+	    		x = x.getNext();
+	    	}
+    	}
+    	System.out.println("}");
+    }
+    
+    public void PrintAllEdgeByNode() {
+    	for(int index =0; index< this.hashTable.length; index++) {
+    		DoubleLinkedList<Graph.Node> x = this.hashTable[index];
+//    		System.out.println("index = " + index);
+    		if (x!= null) {
+    			DoubleLinkedList.LinkedNode<Graph.Node> y =x.getHead();
+    			System.out.print("Edges for node " + y.getIdLinkedNode() + "{");
+	    		while(y!= x.getTail()) {
+	    			System.out.print(y.getIdLinkedNode() + ": ");
+	    			PrintEgdeListForNode(y);
+	    			y = y.getNext();
+	    		}
+	    		System.out.println("}");
+    		}
+    	}
+    }
+    
 
 
     /**
@@ -201,17 +278,17 @@ public class Graph {
     	private int id;
     	private int weight;
     	private int neighborhoodWeight;
-    	private EdgeList<Node> neighbors;
+    	private EdgeList<Graph.Node> neighbors;
     	private int indexinMaximumHeap;
     	
         public Node(int id, int weight){
             this.id = id;
             this.weight = weight;
             this.neighborhoodWeight = this.weight;
-            this.neighbors = new EdgeList();
+            this.neighbors = new EdgeList<Graph.Node>();
         }
 
-        /**
+		/**
          * Returns the id of the node.
          * @return the id of the node.
          */
@@ -223,7 +300,7 @@ public class Graph {
          */
         public int getWeight(){return this.weight;}
         
-        public int getNeighborhoodWeight() {return this.neighborhoodWeight; }
+        public int getNeighborhoodWeight() {return (this!= null) ? this.neighborhoodWeight: 0; }
 
 		public void setNeighborhoodWeight(int nWeight) { this.neighborhoodWeight = nWeight; }
 
@@ -231,279 +308,174 @@ public class Graph {
 
 		public int getindexinMaximumHeap() { return this.indexinMaximumHeap;}
 		public void setindexinMaximumHeap(int newindex) { this.indexinMaximumHeap = newindex;}
+		public void  PrintNode() {
+			System.out.println("id = " +this.id + ",\n" + "weight= " + this.weight + ",\n"+ "neighboorsum= " +  this.neighborhoodWeight + ",\n"+ "index in heap = " + this.indexinMaximumHeap);
+		}
     }
-    
+}
 
-    public void test() {
-    	Node [] nodes = new Node[5];
-		for (int i =0; i< nodes.length; i ++) {
-    		nodes[i] = new Node(i, 10*i);
-    	}
-    	
-    	Graph graph = new Graph(nodes);
-    	System.out.println(graph);
+    class DoubleLinkedList <T> {
+		protected LinkedNode< T > head, tail;
+		
+		public DoubleLinkedList(){ this.head = this.tail = null;}
+	
+		public LinkedNode< T > getHead() { return (this.head != null) ? this.head : null; }
+	
+		public LinkedNode< T > getTail() {return (this.tail != null) ? this.tail : null;}
+	
+		public LinkedNode< T > findNode(T node) {
+			LinkedNode< T > x = head;
+			while (x != null) {
+				if (x.getNode() == node) return x;
+				x = x.getNext();
+			}
+			return null;
+		}
+		
+		
+		//add a node to the end of the list
+		public LinkedNode< T > addNode(T node) {
+			//Create a new node
+			LinkedNode< T > newNode = new LinkedNode< T >(node);
+			
+	
+			//if list is empty, head and tail points to newNode
+			if (head == null) {
+				head = tail = newNode;
+				//head's previous will be null
+				head.setPrevious(null);
+				//tail's next will be null
+				tail.setNext(null);
+			} else {
+				//add newNode to the end of list. tail->next set to newNode
+				tail.setNext(newNode);
+				//newNode->previous set to tail
+				newNode.setPrevious(tail);
+				//newNode becomes new tail
+				tail = newNode;
+				//tail's next point to null
+				tail.setNext(null);
+			}
+			return newNode;
+		}
+		
+		public boolean removeNode(T node) {
+			LinkedNode< T > x = findNode(node);
+	
+			//node not found
+			if (x == null)
+				return false;
+	
+			//update tail and head if necessary
+			if (x == head)
+				head = x.getNext();
+			if (x == tail)
+				tail = x.getPrevious();
+	
+			x.unlinkNode();
+	
+			return true;
+		}
+	
+	
+		static class LinkedNode<Node> {
+			protected LinkedNode<Node> previous = null;
+			protected LinkedNode<Node> next = null;
+			final Node node;
+	
+			public LinkedNode(Node node) {
+				this.node = node;
+			}
+	
+			public int getIdLinkedNode() {
+				return ((Graph.Node) this.node).getId() ;
+			}
+	
+			public DoubleLinkedList<Graph.Node> getNeighbors() {
+				// TODO Auto-generated method stub
+				return ((Graph.Node) this.node).getNeighbors();
+			}
+	
+			public LinkedNode<Node> getNext() {
+				return this.next;
+			}
+	
+			public void setNext(LinkedNode<Node> next) {
+				this.next = next;
+			}
+	
+			public LinkedNode<Node> getPrevious() {
+				return this.previous;
+			}
+	
+			public void setPrevious(LinkedNode<Node> previous) {
+				this.previous = previous;
+			}
+	
+			public Node getNode() {
+				return this.node;
+			}
+			
+			@Override
+			public String toString() {
+				Graph.Node n = (Graph.Node) this.node;
+				Integer s = n.getId();
+				return s.toString();
+			}
+	
+			public void unlinkNode() {
+				// update connections
+				if (next != null)
+					next.previous = previous;
+				if (previous != null)
+					previous.next = next;
+			}
+	
+		}
     }
 
-    public static void main(String[] args) { // אני בטוח שיש דרך יותר טובה לעשות את זה
-		Node [] nodes = new Node[0];
-		Graph graph = new Graph(nodes);
-		graph.test();
-	}
-}
-
-class DoubleLinkedList <T> {
-	protected LinkedNode< T > head, tail;
-
-	public LinkedNode< T > getHead() {
-		return head;
-	}
-
-	public LinkedNode< T > getTail() {
-		return tail;
-	}
-
-	public LinkedNode< T > findNode(T node) {
-		LinkedNode< T > x = head;
-		while (x != null) {
-			if (x.getNode() == node) return x;
-			x = x.getNext();
+	class EdgeList<T extends Graph.Node> extends DoubleLinkedList<T> {
+		//add an edge between two nodes
+		
+		
+		public static void addEdge(Graph.Node node1, Graph.Node node2) {
+			Edge<Graph.Node> eNode2 = (Edge< Graph.Node >) node1.getNeighbors().addNode(node2);
+			Edge<Graph.Node> eNode1 = (Edge< Graph.Node >) node2.getNeighbors().addNode(node1);
+			eNode1.setCon(eNode2);
+			eNode2.setCon(eNode1);
+			node1.setNeighborhoodWeight(node1.getNeighborhoodWeight()+node2.getWeight());
+			node2.setNeighborhoodWeight(node2.getNeighborhoodWeight()+node1.getWeight());
 		}
-		return null;
-	}
-
-	//add a node to the end of the list
-	public LinkedNode< T > addNode(T node) {
-		//Create a new node
-		LinkedNode< T > newNode = new LinkedNode< T >(node);
-
-		//if list is empty, head and tail points to newNode
-		if (head == null) {
-			head = tail = newNode;
-			//head's previous will be null
-			head.setPrevious(null);
-			//tail's next will be null
-			tail.setNext(null);
-		} else {
-			//add newNode to the end of list. tail->next set to newNode
-			tail.setNext(newNode);
-			//newNode->previous set to tail
-			newNode.setPrevious(tail);
-			//newNode becomes new tail
-			tail = newNode;
-			//tail's next point to null
-			tail.setNext(null);
-		}
-		return newNode;
-	}
-
-	public boolean removeNode(T node) {
-		LinkedNode< T > x = findNode(node);
-
-		//node not found
-		if (x == null)
-			return false;
-
-		//update tail and head if necessary
-		if (x == head)
-			head = x.getNext();
-		if (x == tail)
-			tail = x.getPrevious();
-
-		x.unlinkNode();
-
-		return true;
-	}
-
-
-	static class LinkedNode<E> {
-		protected LinkedNode<E> previous;
-		protected LinkedNode<E> next;
-		final E node;
-
-		public LinkedNode(E node) {
-			this.node = node;
-		}
-
-		public LinkedNode<E> getNext() {
-			return next;
-		}
-
-		public void setNext(LinkedNode<E> next) {
-			this.next = next;
-		}
-
-		public LinkedNode<E> getPrevious() {
-			return previous;
-		}
-
-		public void setPrevious(LinkedNode<E> previous) {
-			this.previous = previous;
-		}
-
-		public E getNode() {
-			return node;
-		}
-
-		public void unlinkNode() {
-			// update connections
-			if (next != null)
-				next.previous = previous;
-			if (previous != null)
-				previous.next = next;
-		}
-
-	}
-}
-
-class EdgeList<T extends Graph.Node> extends DoubleLinkedList<T> {
-	//add an edge between two nodes
-	public static void addEdge(Graph.Node node1, Graph.Node node2) {
-		Edge<Graph.Node> eNode2 = (Edge< Graph.Node >) node1.getNeighbors().addNode(node2);
-		Edge<Graph.Node> eNode1 = (Edge< Graph.Node >) node2.getNeighbors().addNode(node1);
-		eNode1.setCon(eNode2);
-		eNode2.setCon(eNode1);
-		node1.setNeighborhoodWeight(node1.getNeighborhoodWeight()+node2.getWeight());
-		node2.setNeighborhoodWeight(node2.getNeighborhoodWeight()+node1.getWeight());
-	}
-
-
-	static class Edge<E extends Graph.Node > extends DoubleLinkedList.LinkedNode<E> {
-		private Edge<E> con;
-		public Edge(E node) {
-			super(node);
-
-		}
-		public Edge(E node,E con) {
-			super(node);
-			this.con=new Edge(con);
-			this.con.setCon(this);
-		}
-
-		public Edge<E> getCon() {
-			return con;
-		}
-
-		public void setCon(Edge<E> con) {
-			this.con = con;
-		}
-
-		@Override
-		public void unlinkNode() {
-			super.unlinkNode();
-			// remove weight from the connected node's neighborhood
-			getNode().setNeighborhoodWeight(getNode().getNeighborhoodWeight()-getCon().getNode().getWeight());
+	
+	
+		static class Edge<E extends Graph.Node > extends DoubleLinkedList.LinkedNode<E> {
+			
+			private Edge<E> con;
+			
+			public Edge(E node) {
+				super(node);
+			}
+			
+			public Edge(E node,E con) {
+				super(node);
+				this.con=new Edge(con);
+				this.con.setCon(this);
+			}
+	
+			public Edge<E> getCon() {
+				return con;
+			}
+	
+			public void setCon(Edge<E> con) {
+				this.con = con;
+			}
+	
+			@Override
+			public void unlinkNode() {
+				super.unlinkNode();
+				// remove weight from the connected node's neighborhood
+				getNode().setNeighborhoodWeight(getNode().getNeighborhoodWeight()-getCon().getNode().getWeight());
+			}
 		}
 	}
-}
-
-//class EdgeList {
-//	//A node class for doubly linked list
-//	//Initially, head and tail is set to null
-//	private EdgeNode head, tail;
-//
-//	public EdgeList() { head = tail = null; }
-//
-//	public EdgeNode getHead() {
-//		return head;
-//	}
-//
-//	public class EdgeNode {
-//		final Graph.Node node;
-//		private EdgeNode previous;
-//		private EdgeNode next;
-//		private EdgeNode connectedNode;
-//
-//		public EdgeNode(Graph.Node node) { this.node = node; }
-//
-//		public EdgeNode(Graph.Node node, Graph.Node con) {
-//			this.node = node;
-//			this.connectedNode = new EdgeNode(con);
-//			this.connectedNode.setConnectedNode(this);
-//		}
-//
-//		public EdgeNode getNext() {
-//			return next;
-//		}
-//
-//		public void setConnectedNode(EdgeNode node) {
-//			this.connectedNode = node;
-//		}
-//
-//		public EdgeNode getConnectedNode() { return this.connectedNode; }
-//
-//		public void deleteNode() {
-//			// update connections
-//			if (next!=null)
-//				next.previous=previous;
-//			if (previous!=null)
-//				previous.next=next;
-//
-//			// remove weight from the connected node's neighborhood
-//			connectedNode.node.setNeighborhoodWeight(
-//					connectedNode.node.getNeighborhoodWeight()-node.getWeight());
-//		}
-//	}
-//
-//	//add an edge between two nodes
-//	public static void addEdge(Graph.Node node1, Graph.Node node2) {
-//		EdgeNode eNode2 = node1.getNeighbors().addNode(node2);
-//		EdgeNode eNode1 = node2.getNeighbors().addNode(node1);
-//		eNode1.setConnectedNode(eNode2);
-//		eNode2.setConnectedNode(eNode1);
-//		node1.setNeighborhoodWeight(node1.getNeighborhoodWeight()+node2.getWeight());
-//		node2.setNeighborhoodWeight(node2.getNeighborhoodWeight()+node1.getWeight());
-//	}
-//
-//	//add a node to the end of the list
-//	public EdgeNode addNode(Graph.Node node) {
-//		//Create a new node
-//		EdgeNode newNode = new EdgeNode(node);
-//
-//		//if list is empty, head and tail points to newNode
-//		if(head == null) {
-//			head = tail = newNode;
-//			//head's previous will be null
-//			head.previous = null;
-//			//tail's next will be null
-//			tail.next = null;
-//		}
-//		else {
-//			//add newNode to the end of list. tail->next set to newNode
-//			tail.next = newNode;
-//			//newNode->previous set to tail
-//			newNode.previous = tail;
-//			//newNode becomes new tail
-//			tail = newNode;
-//			//tail's next point to null
-//			tail.next = null;
-//		}
-//		return newNode;
-//	}
-//
-//	// delete node from the list
-//	public boolean deleteNode(Graph.Node node) {
-//		// check if node in list - binarySearch [[<<???>> HOW?]]
-//		EdgeNode x = head;
-//		while (node!=x.node && x!=null)
-//			x=x.next;
-//
-//		//node not found
-//		if (x==null)
-//			return false;
-//
-//		//update tail and head if necessary
-//		if (x==head)
-//			head=x.next;
-//		if (x==tail)
-//			tail=x.previous;
-//
-//		//delete nodes
-//		x.getConnectedNode().deleteNode();
-//		x.deleteNode();
-//
-//		return true;
-//	}
-//}
-//
-
 
