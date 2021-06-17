@@ -57,8 +57,11 @@ public class Graph {
 //			System.out.println();
 //		}
 //    	graph.PrintAllEdgeByNode();
-    	graph.addEdge(1, 2);
-    	
+		graph.addEdge(1, 2);
+		graph.addEdge(3, 2);
+		graph.addEdge(4, 2);
+		graph.addEdge(0, 3);
+		graph.PrintAllEdgeByNode();
 
     }
 
@@ -77,9 +80,10 @@ public class Graph {
 
 	public Node getNode(int k) {
 		DoubleLinkedList.LinkedNode<Node> x = hashTable[hashFunc(k)].getHead();
-		while (x!=null)
-			if (x.getNode().getId()==k) return x.getNode();
+		while (x!=null) {
+			if (x.getNode().getId() == k) return x.getNode();
 			x = x.getNext();
+		}
 		return null;
 	}
 
@@ -118,7 +122,7 @@ public class Graph {
      */
     public boolean addEdge(int node1_id, int node2_id){
     	Node node1 = getNode(node1_id);
-    	Node node2 = getNode(node1_id);
+    	Node node2 = getNode(node2_id);
     	if(node1 == null || node2 == null)
     		return false;
 
@@ -236,15 +240,16 @@ public class Graph {
     
     public void PrintEgdeListForNode(DoubleLinkedList.LinkedNode<Graph.Node> x2) {
     	DoubleLinkedList<Graph.Node> y = x2.getNeighbors();
-    	System.out.print("{");
     	if (y != null) {
     		DoubleLinkedList.LinkedNode<Graph.Node> x = y.getHead();
 	    	while(x != null) {
-	    		System.out.print(x.getNode().getId()+ ",");
-	    		x = x.getNext();
+				System.out.print("<");
+				System.out.print(x2.getNode().getId()+ ",");
+				System.out.print(x.getNode().getId());
+				System.out.print(">");
+				x = x.getNext();
 	    	}
     	}
-    	System.out.println("}");
     }
     
     public void PrintAllEdgeByNode() {
@@ -253,13 +258,12 @@ public class Graph {
 //    		System.out.println("index = " + index);
     		if (x!= null) {
     			DoubleLinkedList.LinkedNode<Graph.Node> y =x.getHead();
-    			System.out.print("Edges for node " + y.getIdLinkedNode() + "{");
-	    		while(y!= x.getTail()) {
-	    			System.out.print(y.getIdLinkedNode() + ": ");
+	    		while(y!= null) {
+					System.out.print("Edges for node " + y.getIdLinkedNode() + "{");
 	    			PrintEgdeListForNode(y);
 	    			y = y.getNext();
-	    		}
-	    		System.out.println("}");
+					System.out.println("}");
+				}
     		}
     	}
     }
@@ -435,12 +439,34 @@ public class Graph {
     }
 
 	class EdgeList<T extends Graph.Node> extends DoubleLinkedList<T> {
+		public Edge addNode(T node) {
+			//Create a new node
+			Edge< T > newNode = new Edge<T>(node);
+
+			//if list is empty, head and tail points to newNode
+			if (head == null) {
+				head = tail = newNode;
+				//head's previous will be null
+				head.setPrevious(null);
+				//tail's next will be null
+				tail.setNext(null);
+			} else {
+				//add newNode to the end of list. tail->next set to newNode
+				tail.setNext(newNode);
+				//newNode->previous set to tail
+				newNode.setPrevious(tail);
+				//newNode becomes new tail
+				tail = newNode;
+				//tail's next point to null
+				tail.setNext(null);
+			}
+			return newNode;
+		}
+
 		//add an edge between two nodes
-		
-		
 		public static void addEdge(Graph.Node node1, Graph.Node node2) {
-			Edge<Graph.Node> eNode2 = (Edge< Graph.Node >) node1.getNeighbors().addNode(node2);
-			Edge<Graph.Node> eNode1 = (Edge< Graph.Node >) node2.getNeighbors().addNode(node1);
+			Edge<Graph.Node> eNode2 = node1.getNeighbors().addNode(node2);
+			Edge<Graph.Node> eNode1 = node2.getNeighbors().addNode(node1);
 			eNode1.setCon(eNode2);
 			eNode2.setCon(eNode1);
 			node1.setNeighborhoodWeight(node1.getNeighborhoodWeight()+node2.getWeight());
