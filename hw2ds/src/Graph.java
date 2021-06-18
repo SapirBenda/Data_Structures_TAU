@@ -63,6 +63,12 @@ public class Graph {
 		graph.addEdge(0, 3);
 		graph.PrintAllEdgeByNode();
 
+		System.out.println("_________delete_________");
+		graph.deleteNode(2);
+		graph.PrintHashTable();
+		graph.PrintHeap();
+		graph.PrintAllEdgeByNode();
+
     }
 
     public static void main(String[] args) {
@@ -75,6 +81,15 @@ public class Graph {
 
 	private int hashFunc(int k) {
 		return Math.floorMod(Math.floorMod((a*k+b),prime), N);
+	}
+
+	public DoubleLinkedList.LinkedNode<Node> getWrappedNode(int k) {
+		DoubleLinkedList.LinkedNode<Node> x = hashTable[hashFunc(k)].getHead();
+		while (x!=null) {
+			if (x.getNode().getId() == k) return x;
+			x = x.getNext();
+		}
+		return null;
 	}
 
 
@@ -143,17 +158,25 @@ public class Graph {
      * @return returns 'true' if the function deleted a node, otherwise returns 'false'
      */
     public boolean deleteNode(int node_id){
-        //TODO: implement this method.
-		Node node = getNode(node_id);
-		EdgeList.Edge<Node> x = (EdgeList.Edge< Node>) node.getNeighbors().getHead();
-		while (x!=null){ // לסדר את זה
-			numEdges--;
-			x.getCon().unlinkNode();
+		DoubleLinkedList.LinkedNode<Node> node = getWrappedNode(node_id);
+		if (node==null) return false;
+
+		// remove from other node's relationship lists
+		EdgeList.Edge<Node> x = (EdgeList.Edge< Node>) node.getNode().getNeighbors().getHead();
+		while (x!=null){
+			x.getNode().getNeighbors().removeNode(x.getCon());
 			//heap here
+			HeapifyDown(x.getNode().getindexinMaximumHeap());
 			x = (EdgeList.Edge< Node >) x.getNext();
+			numEdges--;
+
 		}
+
+		// remove the node
+		removeFromMaximumHeap(node.getNode());
+		hashTable[hashFunc(node_id)].removeNode(node);
     	this.numNodes--;
-        return false;
+        return true;
     }
     
     public int getNumNodes() {return this.numNodes; }
@@ -165,6 +188,12 @@ public class Graph {
     	newNode.setindexinMaximumHeap(this.numNodes);
     	HeapifyUp(this.numNodes);
     }
+
+    public void removeFromMaximumHeap(Node node) { // O(logn)
+    	node.setNeighborhoodWeight(0); // set the heap key to the minimum
+    	HeapifyDown(node.getindexinMaximumHeap()); // fill space
+    	this.MaximumHeap[node.getindexinMaximumHeap()] = null; // reset heap value
+	}
     
     public int Parent(int index) { return (int)Math.floor(index/2); }
     public int LeftSon(int index) {	return index*2;}
@@ -362,22 +391,41 @@ public class Graph {
 			}
 			return newNode;
 		}
-		
+
+
+		//find and remove a node
 		public boolean removeNode(T node) {
 			LinkedNode< T > x = findNode(node);
-	
+
 			//node not found
 			if (x == null)
 				return false;
-	
+
 			//update tail and head if necessary
 			if (x == head)
 				head = x.getNext();
 			if (x == tail)
 				tail = x.getPrevious();
-	
+
 			x.unlinkNode();
-	
+
+			return true;
+		}
+
+		//remove a node directly without searching for it
+		public boolean removeNode(LinkedNode<T> x) {
+			//node not found
+			if (x == null)
+				return false;
+
+			//update tail and head if necessary
+			if (x == head)
+				head = x.getNext();
+			if (x == tail)
+				tail = x.getPrevious();
+
+			x.unlinkNode();
+
 			return true;
 		}
 	
