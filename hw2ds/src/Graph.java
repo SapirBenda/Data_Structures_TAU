@@ -37,12 +37,12 @@ public class Graph {
     		this.numNodes++;
     		insertToMaximumHeap(node);
     	}
-    	System.out.println("HashTable: ");
-		PrintHashTable();
-		System.out.print("Heap: ");
-		PrintHeap();
-    	System.out.println("----- finish init graph -----");
-    	System.out.println();
+//    	System.out.println("HashTable: ");
+//		PrintHashTable();
+//		System.out.print("Heap: ");
+//		PrintHeap();
+//    	System.out.println("----- finish init graph -----");
+//    	System.out.println();
     }
     
     public void test() {
