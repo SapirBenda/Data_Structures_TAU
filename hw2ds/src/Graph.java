@@ -219,6 +219,7 @@ public class Graph {
 		EdgeList.Edge<Node> x = (EdgeList.Edge< Node>) node.getNode().getNeighbors().getHead();
 		while (x!=null){
 			x.getNode().getNeighbors().removeNode(x.getCon());
+			x.getNode().setNeighborhoodWeight(x.getNode().getNeighborhoodWeight()-node.getNode().getWeight());
 			//heap here
 			PrintHeap();
 			HeapifyDown(x.getNode().getindexinMaximumHeap());
@@ -230,7 +231,6 @@ public class Graph {
 		// remove the node
 		removeFromMaximumHeap(node.getNode());
 		hashTable[hashFunc(node_id)].removeNode(node);
-    	this.numNodes--;
         return true;
     }
     
@@ -245,8 +245,10 @@ public class Graph {
     }
 
     public void removeFromMaximumHeap(Node node) { // O(logn)
-    	node.setNeighborhoodWeight(0); // set the heap key to the minimum
-    	HeapifyDown(node.getindexinMaximumHeap()); // fill space
+		switchvaluesByindexes(node.getindexinMaximumHeap(),numNodes);
+		MaximumHeap[numNodes] = null;
+		this.numNodes--;
+		HeapifyDown(node.getindexinMaximumHeap()); // fill space
 //    	this.MaximumHeap[node.getindexinMaximumHeap()] = null; // reset heap value
 	}
     
@@ -602,7 +604,7 @@ public class Graph {
 			public void unlinkNode() {
 				super.unlinkNode();
 				// remove weight from the connected node's neighborhood
-				getNode().setNeighborhoodWeight(getNode().getNeighborhoodWeight()-getCon().getNode().getWeight());
+//				getNode().setNeighborhoodWeight(getNode().getNeighborhoodWeight()-getCon().getNode().getWeight());
 			}
 		}
 	}
