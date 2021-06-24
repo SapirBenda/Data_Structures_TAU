@@ -11,8 +11,8 @@ public class Graph {
 	private int numEdges;
 	private Node [] MaximumHeap;
 	final int prime = (int) Math.pow(10, 9) + 9;
-	final int a = new Random().ints(1,prime).findFirst().getAsInt();;
-	final int b = new Random().ints(0,prime).findFirst().getAsInt();;
+	final int a = new Random().ints(1,prime).findFirst().getAsInt();
+	final int b = new Random().ints(0,prime).findFirst().getAsInt();
 	private DoubleLinkedList<Node> [] hashTable;
 	private int N;
 	
@@ -37,12 +37,6 @@ public class Graph {
     		this.numNodes++;
     		insertToMaximumHeap(node);
     	}
-    	System.out.println("HashTable: ");
-		PrintHashTable();
-		System.out.print("Heap: ");
-		PrintHeap();
-    	System.out.println("----- finish init graph -----");
-    	System.out.println();
     }
     
     public void test() {
@@ -72,7 +66,6 @@ public class Graph {
     }
     
     public void testaddedge( Graph graph ,int id1, int id2) {
-    	
     	Node node1 = graph.getNode(id1);
     	Node node2 = graph.getNode(id2);
     	boolean re =graph.addEdge(id1, id2);
@@ -221,7 +214,7 @@ public class Graph {
 			x.getNode().getNeighbors().removeNode(x.getCon());
 			x.getNode().setNeighborhoodWeight(x.getNode().getNeighborhoodWeight()-node.getNode().getWeight());
 			//heap here
-			PrintHeap();
+			//PrintHeap();
 			HeapifyDown(x.getNode().getindexinMaximumHeap());
 			x = (EdgeList.Edge< Node >) x.getNext();
 			numEdges--;
@@ -325,7 +318,7 @@ public class Graph {
     }
     
     public void PrintEgdeListForNode(DoubleLinkedList.LinkedNode<Graph.Node> x2) {
-    	DoubleLinkedList<Graph.Node> y = x2.getNeighbors();
+    	DoubleLinkedList<Graph.Node> y = x2.getNode().getNeighbors();
     	if (y != null) {
     		DoubleLinkedList.LinkedNode<Graph.Node> x = y.getHead();
 	    	while(x != null) {
@@ -345,7 +338,7 @@ public class Graph {
     		if (x!= null) {
     			DoubleLinkedList.LinkedNode<Graph.Node> y =x.getHead();
 	    		while(y!= null) {
-					System.out.print("Edges for node " + y.getIdLinkedNode() + " {");
+					System.out.print("Edges for node " + y.getNode().getId() + " {");
 	    			PrintEgdeListForNode(y);
 	    			y = y.getNext();
 					System.out.println("}");
@@ -496,13 +489,8 @@ public class Graph {
 				this.node = node;
 			}
 	
-			public int getIdLinkedNode() {
-				return ((Graph.Node) this.node).getId() ;
-			}
-	
-			public DoubleLinkedList<Graph.Node> getNeighbors() {
-				return ((Graph.Node) this.node).getNeighbors();
-			}
+
+
 	
 			public LinkedNode<Node> getNext() {
 				return this.next;
@@ -598,13 +586,6 @@ public class Graph {
 	
 			public void setCon(Edge<E> con) {
 				this.con = con;
-			}
-	
-			@Override
-			public void unlinkNode() {
-				super.unlinkNode();
-				// remove weight from the connected node's neighborhood
-//				getNode().setNeighborhoodWeight(getNode().getNeighborhoodWeight()-getCon().getNode().getWeight());
 			}
 		}
 	}
