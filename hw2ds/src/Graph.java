@@ -59,13 +59,17 @@ public class Graph {
     	testaddedge(graph,10,10);
 		graph.PrintAllEdgeByNode();
 		checkifallNodesarethedsame(graph);
-		
+		System.out.println("heap after add edges");
+		graph.PrintHeap();
+		System.out.println();
+
 		System.out.println("_________delete_________");
 		testdelete(graph);
 
     }
     
     public void testaddedge( Graph graph ,int id1, int id2) {
+    	
     	Node node1 = graph.getNode(id1);
     	Node node2 = graph.getNode(id2);
     	boolean re =graph.addEdge(id1, id2);
@@ -75,20 +79,22 @@ public class Graph {
     		System.out.println("addEge error! -- " + id2 + " not in graph && add addEdge is true");	
     }
     public void testdelete( Graph graph) {
-//		Random rnd = new Random();
-		for(int i=0; i< graph.hashTable.length -2; i++) {
-//			int x = rnd.nextInt(graph.hashTable.length);
-			int x = i;
-			Node node = graph.getNode(x);
-			boolean b = graph.deleteNode(x);
-			System.out.println("delete " + x);
-			graph.PrintHashTable();
-			graph.PrintHeap();
-			graph.PrintAllEdgeByNode();
-			if(b &&  node == null)
-				System.out.println(x + " not in graph && delete is true");
-			if(!b && node != null) {
-				System.out.println(x + " in graph && delete is false");
+		Random rnd = new Random();
+		for(int i=0; i< 6; i++) {
+			int x = rnd.nextInt(graph.hashTable.length/2);
+//			int x = i;
+			if (x!=4 ) {
+				Node node = graph.getNode(x);
+				boolean b = graph.deleteNode(x);
+				System.out.println("delete " + x + " after delete = ");
+	//			graph.PrintHashTable();
+				graph.PrintHeap();
+				graph.PrintAllEdgeByNode();
+				if(b &&  node == null)
+					System.out.println(x + " not in graph && delete is true");
+				if(!b && node != null) {
+					System.out.println(x + " in graph && delete is false");
+				}
 			}
 			System.out.println();	
 	    }
@@ -207,14 +213,12 @@ public class Graph {
     public boolean deleteNode(int node_id){
 		DoubleLinkedList.LinkedNode<Node> node = getWrappedNode(node_id);
 		if (node==null) return false;
-		System.out.println("in deleteNode - " + node_id);
 		// remove from other node's relationship lists
 		EdgeList.Edge<Node> x = (EdgeList.Edge< Node>) node.getNode().getNeighbors().getHead();
 		while (x!=null){
 			x.getNode().getNeighbors().removeNode(x.getCon());
 			x.getNode().setNeighborhoodWeight(x.getNode().getNeighborhoodWeight()-node.getNode().getWeight());
 			//heap here
-			//PrintHeap();
 			HeapifyDown(x.getNode().getindexinMaximumHeap());
 			x = (EdgeList.Edge< Node >) x.getNext();
 			numEdges--;
