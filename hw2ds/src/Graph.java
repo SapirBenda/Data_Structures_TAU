@@ -1,5 +1,9 @@
 import java.util.*;
 
+// Sapir Ben David 316224104
+// Uri Nissenkorn 207381948
+
+
 public class Graph {
 	/**
      * Initializes the graph on a given set of nodes. The created graph is empty, i.e. it has no edges.
@@ -33,7 +37,7 @@ public class Graph {
     		indexForNodeInHashTable = hashFunc(node.getId());
     		if (this.hashTable[indexForNodeInHashTable]==null) 
 				this.hashTable[indexForNodeInHashTable]= new DoubleLinkedList< Node >();
-    		this.hashTable[indexForNodeInHashTable].addNode(node); // O(1) amortized
+    		this.hashTable[indexForNodeInHashTable].addNode(node);
     		this.numNodes++;
     		LazyInsertToMaximumHeap(node); // O(1)
     	}
@@ -46,93 +50,7 @@ public class Graph {
 
     }
     
-    public void test() {
-    	Node [] nodes = new Node[7];
-		for (int i =0; i< nodes.length; i ++) {
-    		nodes[i] = new Node(i, 10*i);
-    	}
-				
-    	Graph graph = new Graph(nodes);
-    	checkifallNodesarethedsame(graph);
-    	System.out.println("_________add_________");
-    	testaddedge(graph,1,2);
-    	testaddedge(graph,3,2);
-    	testaddedge(graph,3,4);
-    	testaddedge(graph,2,4);
-    	testaddedge(graph,0,1);
-    	testaddedge(graph,0,2);
-    	testaddedge(graph,5,2);
-    	testaddedge(graph,0,6);
-    	testaddedge(graph,10,10);
-		graph.PrintAllEdgeByNode();
-		checkifallNodesarethedsame(graph);
-		System.out.println("heap after add edges");
-		graph.PrintHeap();
-		System.out.println();
-
-		System.out.println("_________delete_________");
-		testdelete(graph);
-
-    }
     
-    public void testaddedge( Graph graph ,int id1, int id2) {
-    	
-    	Node node1 = graph.getNode(id1);
-    	Node node2 = graph.getNode(id2);
-    	boolean re =graph.addEdge(id1, id2);
-    	if (node1 == null && re)
-    		System.out.println("addEge error! -- " + id1 + " not in graph && add addEdge is true");
-    	if (node2 == null && re)
-    		System.out.println("addEge error! -- " + id2 + " not in graph && add addEdge is true");	
-    }
-    public void testdelete( Graph graph) {
-		Random rnd = new Random();
-		for(int i=0; i< graph.MaximumHeap.length; i++) {
-			int x = rnd.nextInt(graph.hashTable.length);
-//			int x = i;
-//			if (x!=4 ) {
-				Node node = graph.getNode(x);
-				boolean b = graph.deleteNode(x);
-				System.out.println("delete " + x + " after delete = ");
-//				graph.PrintHashTable();
-				graph.PrintHeap();
-//				graph.PrintAllEdgeByNode();
-				if(b &&  node == null)
-					System.out.println(x + " not in graph && delete is true");
-				if(!b && node != null) {
-					System.out.println(x + " in graph && delete is false");
-//				}
-			}
-			System.out.println();	
-	    }
-    }
-    public void testmaximumheap(Graph graph) {
-    	
-    }
-    	
-    
-    public void checkifallNodesarethedsame(Graph graph) {
-    	for(int i = 1; i< graph.MaximumHeap.length; i++) {
-    		Node nodeinheap = graph.MaximumHeap[i];
-    		Node nodeinhash = graph.getNode(nodeinheap.getId());
-    		if(nodeinheap !=nodeinhash )
-    			System.out.println("nodes are not in the same place ");
-    		if(nodeinheap.getNeighborhoodWeight() != nodeinhash.getNeighborhoodWeight())
-    			System.out.println("id = " + nodeinhash.getId() + "neighboor weight in hash = " + nodeinhash.getNeighborhoodWeight() + " in heap = " + nodeinheap.getNeighborhoodWeight());
-    		if(nodeinheap.getindexinMaximumHeap() != nodeinhash.getindexinMaximumHeap())
-    			System.out.println("id = " + nodeinhash.getId() + " index in heap : in hash is " + nodeinhash.getindexinMaximumHeap() + " in heap is " + nodeinheap.getindexinMaximumHeap() );
-    	}
-    	
-    }
-
-    public static void main(String[] args) {
-		System.out.println("begin test");
-    	Node [] nodes = new Node[0];
-		Graph graph = new Graph(nodes);
-		graph.test();
-	}
-
-
 	private int hashFunc(int k) {
 		return Math.floorMod(Math.floorMod((a*k+b),prime), N);
 	}
@@ -233,7 +151,6 @@ public class Graph {
 			x.getNode().getNeighbors().removeNode(x.getCon());
 			x.getNode().setNeighborhoodWeight(x.getNode().getNeighborhoodWeight()-node.getNode().getWeight());
 			//heap here
-//			System.out.println("heapifiyinf " +x.getNode().getindexinMaximumHeap() );
 			HeapifyDown(x.getNode().getindexinMaximumHeap());
 			x = (EdgeList.Edge< Node >) x.getNext();
 			numEdges--;
@@ -304,15 +221,16 @@ public class Graph {
     		HeapifyDownForInit(bigger);
     	}
     }
+    
     public void HeapifyDown(int indexOfNodeInMaximumHeap) {
     	int left = LeftSon(indexOfNodeInMaximumHeap);
     	int right = RightSon(indexOfNodeInMaximumHeap);
     	int bigger = indexOfNodeInMaximumHeap;
-    	if(left < this.numNodes + 1 && this.MaximumHeap[left].getNeighborhoodWeight()
+    	if(left <= this.numNodes&& this.MaximumHeap[left].getNeighborhoodWeight()
 				> this.MaximumHeap[bigger].getNeighborhoodWeight() ) {
     		bigger = left;
     	}
-    	if (right < this.numNodes + 1 && this.MaximumHeap[right].getNeighborhoodWeight()
+    	if (right <= this.numNodes && this.MaximumHeap[right].getNeighborhoodWeight()
 				> this.MaximumHeap[bigger].getNeighborhoodWeight()) {
     		bigger = right;
     	}
@@ -322,70 +240,6 @@ public class Graph {
     	}
     }
     
-    
-    public void PrintHeap() {
-//    	System.out.println("The Heap = ");
-    	System.out.print("[");
-    	for(int index =0; index< this.MaximumHeap.length; index++) {
-    		if (this.MaximumHeap[index] == null)
-    			System.out.print("-1, ");
-    		else {
-    			Node node = this.MaximumHeap[index];
-    			System.out.print("("+ node.getId() + ", " + node.getNeighborhoodWeight()+ "),");
-    		}
-    	}
- 
-    	System.out.println("]");
-    }
-    
-    public void PrintHashTable() {
-    	for(int index=0; index< this.hashTable.length;index++) {
-    		System.out.print("[ " + index + " ---> ");
-    		if (this.hashTable[index] == null)
-    			System.out.print("#");
-    		else {
-    			DoubleLinkedList.LinkedNode<Graph.Node> x = this.hashTable[index].getHead();
-    			while(x != null) {
-    				System.out.print("("+ x.getNode().getId() + ", " + x.getNode().getNeighborhoodWeight() + "),");
-    				x = x.getNext();
-    			}
-    		}
-    		System.out.println(" ]");
-    	}
-    }
-    
-    public void PrintEgdeListForNode(DoubleLinkedList.LinkedNode<Graph.Node> x2) {
-    	DoubleLinkedList<Graph.Node> y = x2.getNode().getNeighbors();
-    	if (y != null) {
-    		DoubleLinkedList.LinkedNode<Graph.Node> x = y.getHead();
-	    	while(x != null) {
-				System.out.print("<");
-				System.out.print(x2.getNode().getId()+ ",");
-				System.out.print(x.getNode().getId());
-				System.out.print(">");
-				x = x.getNext();
-	    	}
-    	}
-    }
-    
-    public void PrintAllEdgeByNode() {
-    	for(int index =0; index< this.hashTable.length; index++) {
-    		DoubleLinkedList<Graph.Node> x = this.hashTable[index];
-//    		System.out.println("index = " + index);
-    		if (x!= null) {
-    			DoubleLinkedList.LinkedNode<Graph.Node> y =x.getHead();
-	    		while(y!= null) {
-					System.out.print("Edges for node " + y.getNode().getId() + " {");
-	    			PrintEgdeListForNode(y);
-	    			y = y.getNext();
-					System.out.println("}");
-				}
-    		}
-    	}
-    }
-    
-
-
     /**
      * This class represents a node in the graph.
      */
@@ -477,11 +331,9 @@ public class Graph {
 		//find and remove a node
 		public boolean removeNode(T node) {
 			LinkedNode< T > x = findNode(node);
-
 			//node not found
 			if (x == null)
 				return false;
-
 			//update tail and head if necessary
 			if (x == head)
 				head = x.getNext();
@@ -489,7 +341,6 @@ public class Graph {
 				tail = x.getPrevious();
 
 			x.unlinkNode();
-
 			return true;
 		}
 
@@ -498,7 +349,6 @@ public class Graph {
 			//node not found
 			if (x == null)
 				return false;
-
 			//update tail and head if necessary
 			if (x == head)
 				head = x.getNext();
@@ -506,7 +356,6 @@ public class Graph {
 				tail = x.getPrevious();
 
 			x.unlinkNode();
-
 			return true;
 		}
 	
@@ -527,13 +376,7 @@ public class Graph {
 			public void setPrevious(LinkedNode<Node> previous) {this.previous = previous;}
 	
 			public Node getNode() {	return this.node;}
-			
-//			@Override
-//			public String toString() {
-//				Graph.Node n = (Graph.Node) this.node;
-//				Integer s = n.getId();
-//				return s.toString();
-//			}
+
 			public void unlinkNode() {
 				// update connections
 				if (next != null)
@@ -593,7 +436,6 @@ public class Graph {
 			}
 	
 			public Edge<E> getCon() {return con;}
-	
 			public void setCon(Edge<E> con) {this.con = con;}
 		}
 	}
