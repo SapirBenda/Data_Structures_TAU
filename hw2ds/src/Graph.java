@@ -27,20 +27,27 @@ public class Graph {
 		this.MaximumHeap = new Node[N + 1];
     	this.hashTable = new DoubleLinkedList[N+1];
     	
-    	//add nodes
+    	//add nodes to hash table & heap
     	int indexForNodeInHashTable;
-    	for (Node node:nodes) {
+    	for (Node node:nodes) { // (N)
     		indexForNodeInHashTable = hashFunc(node.getId());
     		if (this.hashTable[indexForNodeInHashTable]==null) 
 				this.hashTable[indexForNodeInHashTable]= new DoubleLinkedList< Node >();
-    		this.hashTable[indexForNodeInHashTable].addNode(node);
+    		this.hashTable[indexForNodeInHashTable].addNode(node); // O(1) amortized
     		this.numNodes++;
-    		insertToMaximumHeap(node);
+    		LazyInsertToMaximumHeap(node); // O(1)
     	}
+
+    	// build heap from an array O(N)
+    	int firstparent = (int) Math.floor((this.N - 1)/2);
+    	for(int parent = firstparent; parent >=1; parent--) {
+    		HeapifyDownForInit(parent);
+    	}
+
     }
     
     public void test() {
-    	Node [] nodes = new Node[5];
+    	Node [] nodes = new Node[7];
 		for (int i =0; i< nodes.length; i ++) {
     		nodes[i] = new Node(i, 10*i);
     	}
@@ -80,21 +87,21 @@ public class Graph {
     }
     public void testdelete( Graph graph) {
 		Random rnd = new Random();
-		for(int i=0; i< 6; i++) {
-			int x = rnd.nextInt(graph.hashTable.length/2);
+		for(int i=0; i< graph.MaximumHeap.length; i++) {
+			int x = rnd.nextInt(graph.hashTable.length);
 //			int x = i;
-			if (x!=4 ) {
+//			if (x!=4 ) {
 				Node node = graph.getNode(x);
 				boolean b = graph.deleteNode(x);
 				System.out.println("delete " + x + " after delete = ");
-	//			graph.PrintHashTable();
+//				graph.PrintHashTable();
 				graph.PrintHeap();
-				graph.PrintAllEdgeByNode();
+//				graph.PrintAllEdgeByNode();
 				if(b &&  node == null)
 					System.out.println(x + " not in graph && delete is true");
 				if(!b && node != null) {
 					System.out.println(x + " in graph && delete is false");
-				}
+//				}
 			}
 			System.out.println();	
 	    }
@@ -130,6 +137,7 @@ public class Graph {
 		return Math.floorMod(Math.floorMod((a*k+b),prime), N);
 	}
 
+	
 	public DoubleLinkedList.LinkedNode<Node> getWrappedNode(int k) {
 		DoubleLinkedList<Graph.Node> y= hashTable[hashFunc(k)];
 		if (y == null)
@@ -155,7 +163,6 @@ public class Graph {
 		return null;
 	}
 
-
 	/**
      * This method returns the node in the graph with the maximum neighborhood weight.
      * Note: nodes that have been removed from the graph using deleteNode are no longer in the graph.
@@ -165,7 +172,6 @@ public class Graph {
         return this.MaximumHeap[1];
     }
     
-
     /**
      * given a node id of a node in the graph, this method returns the neighborhood weight of that node.
      *
@@ -174,6 +180,9 @@ public class Graph {
      * Otherwise, the function returns -1.
      */
     public int getNeighborhoodWeight(int node_id){
+    	System.out.println("node_id= "  + node_id);
+    	Node n = getNode(node_id);
+    	System.out.println("Node = " + n.getId() + ", " + n.getWeight() +", " + n.getNeighborhoodWeight());
     	return getNode(node_id).getNeighborhoodWeight();
     }
 
@@ -219,6 +228,7 @@ public class Graph {
 			x.getNode().getNeighbors().removeNode(x.getCon());
 			x.getNode().setNeighborhoodWeight(x.getNode().getNeighborhoodWeight()-node.getNode().getWeight());
 			//heap here
+//			System.out.println("heapifiyinf " +x.getNode().getindexinMaximumHeap() );
 			HeapifyDown(x.getNode().getindexinMaximumHeap());
 			x = (EdgeList.Edge< Node >) x.getNext();
 			numEdges--;
@@ -231,47 +241,68 @@ public class Graph {
         return true;
     }
     
+    
     public int getNumNodes() {return this.numNodes; }
     public int getNumEdges() { return this.numEdges; }
 
     
-    public void insertToMaximumHeap(Node newNode) { // O(logn)
+    public void LazyInsertToMaximumHeap(Node newNode) { 
     	this.MaximumHeap[this.numNodes] = newNode;
     	newNode.setindexinMaximumHeap(this.numNodes);
-    	HeapifyUp(this.numNodes);
     }
 
-    public void removeFromMaximumHeap(Node node) { // O(logn)
-		switchvaluesByindexes(node.getindexinMaximumHeap(),numNodes);
+    public void removeFromMaximumHeap(Node node) { 
+		switchValuesByindexes(node.getindexinMaximumHeap(),numNodes);
 		MaximumHeap[numNodes] = null;
 		this.numNodes--;
-		HeapifyDown(node.getindexinMaximumHeap()); // fill space
-//    	this.MaximumHeap[node.getindexinMaximumHeap()] = null; // reset heap value
+		HeapifyDown(node.getindexinMaximumHeap());
 	}
     
     public int Parent(int index) { return (int)Math.floor(index/2); }
     public int LeftSon(int index) {	return index*2;}
     public int RightSon(int index) {return index*2 +1;}
     
-    public void switchvaluesByindexes(int index1, int index2) {
+    public void switchValuesByindexes(int index1, int index2) {
+//    	System.out.println("swict " + index1 + ", "+ index2);
     	this.MaximumHeap[index1].setindexinMaximumHeap(index2);
     	this.MaximumHeap[index2].setindexinMaximumHeap(index1);
     	Node temp = this.MaximumHeap[index1];
     	this.MaximumHeap[index1] = this.MaximumHeap[index2];
     	this.MaximumHeap[index2] = temp;
-
     }
     
-    public void HeapifyUp(int indexOfNodeInMaximumHeap) { // O(logn)
+    public void HeapifyUp(int indexOfNodeInMaximumHeap) { 
     	int parent = Parent(indexOfNodeInMaximumHeap);
     	while(indexOfNodeInMaximumHeap > 1 && this.MaximumHeap[indexOfNodeInMaximumHeap].getNeighborhoodWeight() 
-						> this.MaximumHeap[parent].getNeighborhoodWeight()) {
-    		switchvaluesByindexes(indexOfNodeInMaximumHeap,parent);
+				> this.MaximumHeap[parent].getNeighborhoodWeight()) {
+    		switchValuesByindexes(indexOfNodeInMaximumHeap,parent);
     		indexOfNodeInMaximumHeap = parent;
     		parent = Parent(indexOfNodeInMaximumHeap);
     	}
     }
     
+    public void HeapifyDownForInit(int indexOfNodeInMaximumHeap) {
+    	int left = LeftSon(indexOfNodeInMaximumHeap);
+    	int right = RightSon(indexOfNodeInMaximumHeap);
+    	int bigger = indexOfNodeInMaximumHeap;
+    	int len = this.MaximumHeap.length;
+    	if(left < len && this.MaximumHeap[left].getNeighborhoodWeight()
+				> this.MaximumHeap[bigger].getNeighborhoodWeight() ) {
+    		bigger = left;
+    	}
+    	if (bigger > indexOfNodeInMaximumHeap) {
+    		switchValuesByindexes(indexOfNodeInMaximumHeap, bigger);
+    		HeapifyDownForInit(bigger);
+    	}
+    	if (right <len && this.MaximumHeap[right].getNeighborhoodWeight()
+				> this.MaximumHeap[indexOfNodeInMaximumHeap].getNeighborhoodWeight()) {
+    		bigger = right;
+    	}
+    	if (bigger > indexOfNodeInMaximumHeap) {
+    		switchValuesByindexes(indexOfNodeInMaximumHeap, bigger);
+    		HeapifyDownForInit(bigger);
+    	}
+    }
     public void HeapifyDown(int indexOfNodeInMaximumHeap) {
     	int left = LeftSon(indexOfNodeInMaximumHeap);
     	int right = RightSon(indexOfNodeInMaximumHeap);
@@ -285,10 +316,11 @@ public class Graph {
     		bigger = right;
     	}
     	if (bigger > indexOfNodeInMaximumHeap) {
-    		switchvaluesByindexes(indexOfNodeInMaximumHeap, bigger);
+    		switchValuesByindexes(indexOfNodeInMaximumHeap, bigger);
     		HeapifyDown(bigger);
     	}
     }
+    
     
     public void PrintHeap() {
 //    	System.out.println("The Heap = ");
@@ -374,13 +406,11 @@ public class Graph {
             this.neighborhoodWeight = this.weight;
             this.neighbors = new EdgeList<Graph.Node>();
         }
-
 		/**
          * Returns the id of the node.
          * @return the id of the node.
          */
         public int getId(){ return this.id; }
-
         /**
          * Returns the weight of the node.
          * @return the weight of the node.
@@ -394,14 +424,12 @@ public class Graph {
 		public EdgeList<Node> getNeighbors() { return this.neighbors; }
 
 		public int getindexinMaximumHeap() { return this.indexinMaximumHeap;}
+		
 		public void setindexinMaximumHeap(int newindex) { this.indexinMaximumHeap = newindex;}
-		public void  PrintNode() {
-			System.out.println("id = " +this.id + ",\n" + "weight= " + this.weight + ",\n"+ "neighboorsum= " +  this.neighborhoodWeight + ",\n"+ "index in heap = " + this.indexinMaximumHeap);
-		}
     }
-}
 
-    class DoubleLinkedList <T> {
+
+    static class DoubleLinkedList <T> {
 		protected LinkedNode< T > head, tail;
 		
 		public DoubleLinkedList(){ this.head = this.tail = null;}
@@ -424,8 +452,6 @@ public class Graph {
 		public LinkedNode< T > addNode(T node) {
 			//Create a new node
 			LinkedNode< T > newNode = new LinkedNode< T >(node);
-			
-	
 			//if list is empty, head and tail points to newNode
 			if (head == null) {
 				head = tail = newNode;
@@ -489,40 +515,24 @@ public class Graph {
 			protected LinkedNode<Node> next = null;
 			final Node node;
 	
-			public LinkedNode(Node node) {
-				this.node = node;
-			}
+			public LinkedNode(Node node) {this.node = node;	}
 	
-
-
+			public LinkedNode<Node> getNext() {	return this.next;}
 	
-			public LinkedNode<Node> getNext() {
-				return this.next;
-			}
+			public void setNext(LinkedNode<Node> next) {this.next = next;}
 	
-			public void setNext(LinkedNode<Node> next) {
-				this.next = next;
-			}
+			public LinkedNode<Node> getPrevious() {	return this.previous;}
 	
-			public LinkedNode<Node> getPrevious() {
-				return this.previous;
-			}
+			public void setPrevious(LinkedNode<Node> previous) {this.previous = previous;}
 	
-			public void setPrevious(LinkedNode<Node> previous) {
-				this.previous = previous;
-			}
-	
-			public Node getNode() {
-				return this.node;
-			}
+			public Node getNode() {	return this.node;}
 			
-			@Override
-			public String toString() {
-				Graph.Node n = (Graph.Node) this.node;
-				Integer s = n.getId();
-				return s.toString();
-			}
-	
+//			@Override
+//			public String toString() {
+//				Graph.Node n = (Graph.Node) this.node;
+//				Integer s = n.getId();
+//				return s.toString();
+//			}
 			public void unlinkNode() {
 				// update connections
 				if (next != null)
@@ -530,15 +540,14 @@ public class Graph {
 				if (previous != null)
 					previous.next = next;
 			}
-	
 		}
     }
 
-	class EdgeList<T extends Graph.Node> extends DoubleLinkedList<T> {
+	static class EdgeList<T extends Graph.Node> extends DoubleLinkedList<T> {
+		
 		public Edge addNode(T node) {
 			//Create a new node
 			Edge< T > newNode = new Edge<T>(node);
-
 			//if list is empty, head and tail points to newNode
 			if (head == null) {
 				head = tail = newNode;
@@ -574,9 +583,7 @@ public class Graph {
 			
 			private Edge<E> con;
 			
-			public Edge(E node) {
-				super(node);
-			}
+			public Edge(E node) {super(node);}
 			
 			public Edge(E node,E con) {
 				super(node);
@@ -584,12 +591,9 @@ public class Graph {
 				this.con.setCon(this);
 			}
 	
-			public Edge<E> getCon() {
-				return con;
-			}
+			public Edge<E> getCon() {return con;}
 	
-			public void setCon(Edge<E> con) {
-				this.con = con;
-			}
+			public void setCon(Edge<E> con) {this.con = con;}
 		}
 	}
+}
