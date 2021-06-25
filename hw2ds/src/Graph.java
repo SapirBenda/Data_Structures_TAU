@@ -265,7 +265,6 @@ public class Graph {
     public int RightSon(int index) {return index*2 +1;}
     
     public void switchValuesByindexes(int index1, int index2) {
-//    	System.out.println("swict " + index1 + ", "+ index2);
     	this.MaximumHeap[index1].setindexinMaximumHeap(index2);
     	this.MaximumHeap[index2].setindexinMaximumHeap(index1);
     	Node temp = this.MaximumHeap[index1];
