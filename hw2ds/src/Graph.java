@@ -1,7 +1,7 @@
 import java.util.*;
 
-// Sapir Ben David 316224104
-// Uri Nissenkorn 207381948
+// sapirb3 -  Sapir Ben David 316224104
+// urin - Uri Nissenkorn 207381948
 
 
 public class Graph {
@@ -98,9 +98,6 @@ public class Graph {
      * Otherwise, the function returns -1.
      */
     public int getNeighborhoodWeight(int node_id){
-    	System.out.println("node_id= "  + node_id);
-    	Node n = getNode(node_id);
-    	System.out.println("Node = " + n.getId() + ", " + n.getWeight() +", " + n.getNeighborhoodWeight());
     	return getNode(node_id).getNeighborhoodWeight();
     }
 
