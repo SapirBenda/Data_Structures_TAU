@@ -25,7 +25,7 @@ public class Graph {
 		
 		//init data structures
 		this.MaximumHeap = new Node[N + 1];
-    	this.hashTable = new DoubleLinkedList[N+1];
+    	this.hashTable = new DoubleLinkedList[N];
     	
     	//add nodes to hash table & heap
     	int indexForNodeInHashTable;
@@ -222,6 +222,11 @@ public class Graph {
     public boolean deleteNode(int node_id){
 		DoubleLinkedList.LinkedNode<Node> node = getWrappedNode(node_id);
 		if (node==null) return false;
+
+		// remove the node
+		removeFromMaximumHeap(node.getNode());
+		hashTable[hashFunc(node_id)].removeNode(node);
+
 		// remove from other node's relationship lists
 		EdgeList.Edge<Node> x = (EdgeList.Edge< Node>) node.getNode().getNeighbors().getHead();
 		while (x!=null){
@@ -234,10 +239,6 @@ public class Graph {
 			numEdges--;
 
 		}
-
-		// remove the node
-		removeFromMaximumHeap(node.getNode());
-		hashTable[hashFunc(node_id)].removeNode(node);
         return true;
     }
     
@@ -251,11 +252,12 @@ public class Graph {
     	newNode.setindexinMaximumHeap(this.numNodes);
     }
 
-    public void removeFromMaximumHeap(Node node) { 
-		switchValuesByindexes(node.getindexinMaximumHeap(),numNodes);
+    public void removeFromMaximumHeap(Node node) {
+    	int replacedIndex = node.getindexinMaximumHeap();
+		switchValuesByindexes(replacedIndex,numNodes);
 		MaximumHeap[numNodes] = null;
 		this.numNodes--;
-		HeapifyDown(node.getindexinMaximumHeap());
+		HeapifyDown(replacedIndex);
 	}
     
     public int Parent(int index) { return (int)Math.floor(index/2); }
@@ -307,11 +309,11 @@ public class Graph {
     	int left = LeftSon(indexOfNodeInMaximumHeap);
     	int right = RightSon(indexOfNodeInMaximumHeap);
     	int bigger = indexOfNodeInMaximumHeap;
-    	if(left < this.numNodes && this.MaximumHeap[left].getNeighborhoodWeight()
+    	if(left < this.numNodes + 1 && this.MaximumHeap[left].getNeighborhoodWeight()
 				> this.MaximumHeap[bigger].getNeighborhoodWeight() ) {
     		bigger = left;
     	}
-    	if (right < this.numNodes && this.MaximumHeap[right].getNeighborhoodWeight()
+    	if (right < this.numNodes + 1 && this.MaximumHeap[right].getNeighborhoodWeight()
 				> this.MaximumHeap[bigger].getNeighborhoodWeight()) {
     		bigger = right;
     	}
