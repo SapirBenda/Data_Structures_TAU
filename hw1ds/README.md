@@ -1,3 +1,3 @@
-# Project #1 - implements AVL-Tree
+# Project #1 - implement AVL-Tree
 
 
